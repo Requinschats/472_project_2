@@ -2,13 +2,12 @@ import time
 
 import Game.selectors as s
 import Game.outputs as o
+import Game.constants as c
 
 
 class Game:
-    MINIMAX = 0
-    ALPHABETA = 1
-    HUMAN = 2
-    AI = 3
+    MINIMAX, ALPHABETA = 0, 1
+    HUMAN, AI = 2, 3
 
     def __init__(self, recommend=True):
         self.initialize_game()
@@ -24,43 +23,19 @@ class Game:
     def is_valid(self, px, py):
         if px < 0 or px > 2 or py < 0 or py > 2:
             return False
-        elif self.current_state[px][py] != '.':
+        elif self.current_state[px][py] != c.EMPTY_TOKEN:
             return False
         else:
             return True
 
     def is_end(self):
-        vertical_win = s.select_vertical_win(self)
-        if vertical_win:
-            return vertical_win
-
-        horizontal_win = s.select_horizontal_win(self)
-        if vertical_win:
-            return horizontal_win
-
-        main_diagonal_win = s.select_main_diagonal_win(self)
-        if main_diagonal_win:
-            return main_diagonal_win
-
-        second_diagonal_win = s.select_second_diagonal_win(self)
-        if second_diagonal_win:
-            return second_diagonal_win
-
-        if s.select_is_board_full(self):
-            return None
-
-        return '.'
+        return s.select_is_end(self)
 
     def check_end(self):
         self.result = self.is_end()
-        # Printing the appropriate message if the game has ended
-        if self.result != None:
-            if self.result == 'X':
-                print('The winner is X!')
-            elif self.result == 'O':
-                print('The winner is O!')
-            elif self.result == '.':
-                print("It's a tie!")
+        end_game_output = s.select_end_game_output(self)
+        print(end_game_output)
+        if self.result is not None:
             self.initialize_game()
         return self.result
 
@@ -81,8 +56,8 @@ class Game:
     def minimax(self, max=False):
         game_result = 2 if not max else -2  # -1 = X wins, 1 = X loss
         x, y = None, None
-
         end_game = s.select_end_game(self.is_end(), x, y)
+
         if end_game:
             return end_game
 
@@ -91,50 +66,45 @@ class Game:
                 if self.current_state[i][j] == '.':
                     if max:
                         self.current_state[i][j] = 'O'
-                        (v, _, _) = self.minimax(max=False)
-                        if v > game_result:
-                            game_result = v
+                        (minimax_result, _, _) = self.minimax(max=False)
+                        if minimax_result > game_result:
+                            game_result = minimax_result
                             x = i
                             y = j
                     else:
                         self.current_state[i][j] = 'X'
-                        (v, _, _) = self.minimax(max=True)
-                        if v < game_result:
-                            game_result = v
+                        (minimax_result, _, _) = self.minimax(max=True)
+                        if minimax_result < game_result:
+                            game_result = minimax_result
                             x = i
                             y = j
                     self.current_state[i][j] = '.'
         return game_result, x, y
 
+    # Minimizing for 'X' and maximizing for 'O'
     def alphabeta(self, alpha=-2, beta=2, max=False):
-        # Minimizing for 'X' and maximizing for 'O'
-        # Possible values are:
-        # -1 - win for 'X'
-        # 0  - a tie
-        # 1  - loss for 'X'
-        # We're initially setting it to 2 or -2 as worse than the worst case:
         value = 2 if not max else -2
         x, y = None, None
         end_game = s.select_end_game(self.is_end(), x, y)
+
         if end_game:
             return end_game
+
         for i in range(0, 3):
             for j in range(0, 3):
                 if self.current_state[i][j] == '.':
                     if max:
                         self.current_state[i][j] = 'O'
-                        (v, _, _) = self.alphabeta(alpha, beta, max=False)
-                        if v > value:
-                            value = v
-                            x = i
-                            y = j
+                        (alphabeta_result, _, _) = self.alphabeta(alpha, beta, max=False)
+                        if alphabeta_result > value:
+                            value = alphabeta_result
+                            x, y = i, j
                     else:
                         self.current_state[i][j] = 'X'
-                        (v, _, _) = self.alphabeta(alpha, beta, max=True)
-                        if v < value:
-                            value = v
-                            x = i
-                            y = j
+                        (alphabeta_result, _, _) = self.alphabeta(alpha, beta, max=True)
+                        if alphabeta_result < value:
+                            value = alphabeta_result
+                            x, y = i, j
                     self.current_state[i][j] = '.'
                     if max:
                         if value >= beta:
