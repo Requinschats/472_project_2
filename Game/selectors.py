@@ -47,13 +47,19 @@ def select_next_player(game):
     return game.player_turn
 
 
-def select_initial_state():
-    return [[c.EMPTY_TOKEN, c.EMPTY_TOKEN, c.EMPTY_TOKEN],
-            [c.EMPTY_TOKEN, c.EMPTY_TOKEN, c.EMPTY_TOKEN],
-            [c.EMPTY_TOKEN, c.EMPTY_TOKEN, c.EMPTY_TOKEN]]
+def select_initial_state(board_size, blocks):
+    board_range = range(board_size)
+    board = [[None for y in board_range] for x in board_range]
+    for y_coordinate in board_range:
+        for x_coordinate in board_range:
+            if (y_coordinate, x_coordinate) in blocks:
+                board[y_coordinate][x_coordinate] = c.BLOCK_TOKEN
+            else:
+                board[y_coordinate][x_coordinate] = c.EMPTY_TOKEN
+    return board
 
 
-def select_inital_player():
+def select_initial_player():
     return c.MIN_TOKEN
 
 

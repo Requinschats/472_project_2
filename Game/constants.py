@@ -1,3 +1,4 @@
+BLOCK_TOKEN = '@'
 EMPTY_TOKEN = '.'
 MIN_TOKEN = 'X'
 MAX_TOKEN = 'O'

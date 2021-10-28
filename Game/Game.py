@@ -9,13 +9,14 @@ class Game:
     MINIMAX, ALPHABETA = 0, 1
     HUMAN, AI = 2, 3
 
-    def __init__(self, recommend=True):
-        self.initialize_game()
+    def __init__(self, board_size, blocks, recommend=True):
+        self.initialize_game(board_size=board_size, blocks=blocks)
         self.recommend = recommend
 
-    def initialize_game(self):
-        self.current_state = s.select_initial_state()
-        self.player_turn = s.select_inital_player()
+    def initialize_game(self, board_size, blocks):
+        self.current_state = s.select_initial_state(board_size, blocks)
+        print(self.current_state)
+        self.player_turn = s.select_initial_player()
 
     def draw_board(self):
         o.draw_game_board(self)
@@ -116,7 +117,6 @@ class Game:
 
     def play(self, algo=None, player_x=None, player_o=None):
         algo, player_x, player_o = s.select_play_initial_values(self, algo, player_x, player_o)
-
         while True:
             self.draw_board()
 
@@ -128,13 +128,11 @@ class Game:
             elif algo == self.ALPHABETA:
                 (m, x, y) = self.alphabeta(max=s.select_is_max(self))
 
-            is_human_turn = s.select_is_human_turn(self, player_x, player_o)
-            is_ai_turn = s.select_is_ai_turn(self, player_x, player_o)
-            if is_human_turn:
+            if s.select_is_human_turn(self, player_x, player_o):
                 if self.recommend:
                     o.output_human_turn_recommend(time.time(), x, y)
                 (x, y) = self.input_move()
-            if is_ai_turn:
+            if s.select_is_ai_turn(self, player_x, player_o):
                 o.output_ai_turn_recommend(time.time(), self, x, y)
 
             self.finish_turn(x=x, y=y)
