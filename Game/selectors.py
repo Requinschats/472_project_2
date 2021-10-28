@@ -100,12 +100,15 @@ def select_is_end(game):
 
 
 def select_is_valid_move(game, px, py):
-    is_non_empty_space = game.current_state[px][py] != c.EMPTY_TOKEN
     is_outside_board = px < 0 or px > 2 or py < 0 or py > 2
-    if is_outside_board or is_non_empty_space:
+    if is_outside_board:
         return False
-    else:
-        return True
+
+    is_non_empty_space = game.current_state[px][py] != c.EMPTY_TOKEN
+    if is_non_empty_space:
+        return False
+
+    return True
 
 
 def select_is_empty_position(position):
