@@ -1,37 +1,53 @@
 import Game.constants as c
+import numpy as np
+import Game.utils as u
 
 
-def select_vertical_win(game):
-    for i in range(0, 3):
-        if (game.current_state[0][i] != c.EMPTY_TOKEN and
-                game.current_state[0][i] == game.current_state[1][i] and
-                game.current_state[1][i] == game.current_state[2][i]):
-            return game.current_state[0][i]
+def select_board_diagonals(board):
+    board = np.array(board)
+    return [board[::-1, :].diagonal(i) for i in range(-board.shape[0] + 1, board.shape[1])] \
+        .extend(board.diagonal(i) for i in range(board.shape[1] - 1, -board.shape[0], -1)) \
+        .tolist()
 
 
-def select_horizontal_win(game):
-    for i in range(0, 3):
-        if game.current_state[i] == ['X', 'X', 'X']:
-            return 'X'
-        elif game.current_state[i] == ['O', 'O', 'O']:
-            return 'O'
+def select_is_winning_diagonal(diagonal, diagonal_size):
+    token_to_match = diagonal[0]
+    matching_count = 1
+    for index, token in diagonal:
+        if index == 0:
+            continue
+        elif token == c.EMPTY_TOKEN or token == c.BLOCK_TOKEN:
+            matching_count = 1
+            token_to_match = None
+        elif token == token_to_match:
+            matching_count += 1
+        elif token != token_to_match:
+            matching_count = 1
+            token_to_match = token
+        if matching_count == diagonal_size:
+            return True
+    return False
 
 
-def select_main_diagonal_win(game):
-    if (game.current_state[0][0] != c.EMPTY_TOKEN and
-            game.current_state[0][0] == game.current_state[1][1] and
-            game.current_state[0][0] == game.current_state[2][2]):
-        return game.current_state[0][0]
+def select_diagonal_win(board, diagonal_size):
+    diagonals = select_board_diagonals(board)
+    possibly_winning_diagonals = list(filter(lambda d: len(d) >= diagonal_size, diagonals))
+
+    if len(possibly_winning_diagonals) == 0:
+        return False
+
+    return any(select_is_winning_diagonal, possibly_winning_diagonals)
 
 
-def select_second_diagonal_win(game):
-    if (game.current_state[0][2] != c.EMPTY_TOKEN and
-            game.current_state[0][2] == game.current_state[1][1] and
-            game.current_state[0][2] == game.current_state[2][0]):
-        return game.current_state[0][2]
+def select_vertical_win(game, board_parameters):
+    return False
 
 
-def select_is_board_full(game):
+def select_horizontal_win(game, board_parameters):
+    return False
+
+
+def select_is_board_full(game, board_parameters):
     for i in range(0, 3):
         for j in range(0, 3):
             if game.current_state[i][j] == c.EMPTY_TOKEN:
@@ -48,7 +64,7 @@ def select_next_player(game):
 
 
 def select_initial_state(board_parameters):
-    board_size, blocks = board_parameters
+    board_size, blocks, winning_line_size = board_parameters
     board_range = range(board_size)
     board = [[None for y in board_range] for x in board_range]
     for y_coordinate in board_range:
@@ -83,24 +99,20 @@ def select_end_game_output(game):
             return "It's a tie!"
 
 
-def select_is_end(game):
-    vertical_win = select_vertical_win(game)
+def select_is_end(game, board_parameters):
+    vertical_win = select_vertical_win(game, board_parameters)
     if vertical_win:
         return vertical_win
 
-    horizontal_win = select_horizontal_win(game)
+    horizontal_win = select_horizontal_win(game, board_parameters)
     if vertical_win:
         return horizontal_win
 
-    main_diagonal_win = select_main_diagonal_win(game)
-    if main_diagonal_win:
-        return main_diagonal_win
+    diagonal_win = select_diagonal_win(game, board_parameters)
+    if diagonal_win:
+        return diagonal_win
 
-    second_diagonal_win = select_second_diagonal_win(game)
-    if second_diagonal_win:
-        return second_diagonal_win
-
-    if select_is_board_full(game):
+    if select_is_board_full(game, board_parameters):
         return None
 
     return c.EMPTY_TOKEN

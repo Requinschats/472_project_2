@@ -1,10 +1,11 @@
 import time
 
 
-def draw_game_board(game):
+def draw_game_board(game, board_parameters):
+    board_size, _, _ = board_parameters
     print()
-    for y in range(0, 3):
-        for x in range(0, 3):
+    for y in range(board_size):
+        for x in range(board_size):
             print(F'{game.current_state[x][y]}', end="")
         print()
     print()
@@ -43,8 +44,17 @@ def input_block_coordinates(block_id, board_size):
             return x_coordinate, y_coordinate
 
 
+def input_blocks_count():
+    blocks_count = -1
+    while blocks_count < 0 or blocks_count % 2 != 0:
+        blocks_count = int(input("Enter the number of blocks: "))
+        if blocks_count < 0 or blocks_count % 2 != 0:
+            print("Invalid blocks count")
+    return blocks_count
+
+
 def input_blocks(board_size):
-    blocks_count = int(input("Enter the number of blocks: "))
+    blocks_count = input_blocks_count()
     blocks = []
     for block_id in range(blocks_count):
         block_coordinates = input_block_coordinates(block_id, board_size)
@@ -54,14 +64,24 @@ def input_blocks(board_size):
 
 def input_board_size():
     board_size = 0
-    while board_size < 1:
+    while board_size < 3 or board_size > 10:
         board_size = int(input("Enter board size: "))
-        if board_size < 1:
+        if board_size < 3 or board_size > 10:
             print("Invalid size")
     return board_size
+
+
+def input_winning_line_size():
+    winning_line_size = 0
+    while winning_line_size < 3:
+        winning_line_size = int(input("Enter winning line size: "))
+        if winning_line_size < 3:
+            print("Invalid size")
+    return winning_line_size
 
 
 def input_game_settings():
     board_size = input_board_size()
     blocks = input_blocks(board_size)
-    return board_size, blocks
+    winning_line_size = input_winning_line_size()
+    return board_size, blocks, winning_line_size

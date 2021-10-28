@@ -18,17 +18,11 @@ class Game:
         print(self.current_state)
         self.player_turn = s.select_initial_player()
 
-    def draw_board(self):
-        o.draw_game_board(self)
-
     def is_valid_move(self, px, py):
         return s.select_is_valid_move(self, px, py)
 
-    def is_end(self):
-        return s.select_is_end(self)
-
     def check_end(self, board_parameters):
-        self.result = self.is_end()
+        self.result = s.select_is_end(self, board_parameters)
         print(s.select_end_game_output(self))
         if self.result is not None:
             self.initialize_game(board_parameters)
@@ -38,7 +32,7 @@ class Game:
         while True:
             px, py = o.input_coordonates(self)
             if self.is_valid_move(px, py):
-                return (px, py)
+                return px, py
             else:
                 print('The move is not valid! Try again.')
 
@@ -48,12 +42,16 @@ class Game:
     def minimax(self, max=False, board_parameters=None):
         game_result = 2 if not max else -2  # -1 = X wins, 1 = X loss
         x, y = None, None
+
         end_game = s.select_end_game(self.is_end(), x, y)
         if end_game:
             return end_game
 
-        for y_coordinate in range(0, 3):
-            for x_coordinate in range(0, 3):
+        board_size, blocks, winning_line_size = board_parameters
+        board_range = range(board_size)
+
+        for y_coordinate in board_range:
+            for x_coordinate in board_range:
                 if s.select_is_empty_position(self.current_state[y_coordinate][x_coordinate]):
                     if max:
                         self.current_state[y_coordinate][x_coordinate] = c.MAX_TOKEN
@@ -77,7 +75,7 @@ class Game:
         x, y = None, None
         end_game = s.select_end_game(self.is_end(), x, y)
 
-        board_size, blocks = board_parameters
+        board_size, blocks, winning_line_size = board_parameters
         board_range = range(board_size)
 
         if end_game:
@@ -122,7 +120,7 @@ class Game:
     def play(self, algo=None, player_x=None, player_o=None, board_parameters=None):
         algo, player_x, player_o = s.select_play_initial_values(self, algo, player_x, player_o)
         while True:
-            self.draw_board()
+            o.draw_game_board(self, board_parameters)
             if self.check_end(board_parameters=board_parameters):
                 return
 
