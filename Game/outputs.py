@@ -21,7 +21,9 @@ def output_evaluation_time(start):
     print(F'Evaluation time: {round(time.time() - start, 7)}s')
 
 
-def output_human_turn_recommend(start, x, y):
+def output_human_turn_recommend(should_recommend, start, x, y):
+    if not should_recommend:
+        return
     output_evaluation_time(start)
     print(F'Recommended move: x = {x}, y = {y}')
 

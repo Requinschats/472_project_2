@@ -47,7 +47,8 @@ def select_next_player(game):
     return game.player_turn
 
 
-def select_initial_state(board_size, blocks):
+def select_initial_state(board_parameters):
+    board_size, blocks = board_parameters
     board_range = range(board_size)
     board = [[None for y in board_range] for x in board_range]
     for y_coordinate in board_range:
@@ -143,3 +144,14 @@ def select_play_initial_values(game, algo, player_x, player_o):
     if player_o is None:
         player_o = game.HUMAN
     return algo, player_x, player_o
+
+
+def select_heuristic_move(board_parameters, algo, game):
+    move = None
+    if algo == game.MINIMAX:
+        (_, x, y) = game.minimax(max=select_is_max(game), board_parameters=board_parameters)
+        move = (_, x, y)
+    elif algo == game.ALPHABETA:
+        (m, x, y) = game.alphabeta(max=select_is_max(game), board_parameters=board_parameters)
+        move = (m, x, y)
+    return move
