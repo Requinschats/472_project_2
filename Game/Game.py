@@ -20,13 +20,8 @@ class Game:
     def draw_board(self):
         o.draw_game_board(self)
 
-    def is_valid(self, px, py):
-        if px < 0 or px > 2 or py < 0 or py > 2:
-            return False
-        elif self.current_state[px][py] != c.EMPTY_TOKEN:
-            return False
-        else:
-            return True
+    def is_valid_move(self, px, py):
+        return s.select_is_valid_move(self, px, py)
 
     def is_end(self):
         return s.select_is_end(self)
@@ -41,10 +36,8 @@ class Game:
 
     def input_move(self):
         while True:
-            print(F'Player {self.player_turn}, enter your move:')
-            px = int(input('enter the x coordinate: '))
-            py = int(input('enter the y coordinate: '))
-            if self.is_valid(px, py):
+            px, py = o.input_coordonates(self)
+            if self.is_valid_move(px, py):
                 return (px, py)
             else:
                 print('The move is not valid! Try again.')
@@ -52,33 +45,30 @@ class Game:
     def switch_player(self):
         return s.select_next_player(self)
 
-    # Minimizing for 'X' and maximizing for 'O'
     def minimax(self, max=False):
         game_result = 2 if not max else -2  # -1 = X wins, 1 = X loss
         x, y = None, None
         end_game = s.select_end_game(self.is_end(), x, y)
-
         if end_game:
             return end_game
 
-        for i in range(0, 3):
-            for j in range(0, 3):
-                if self.current_state[i][j] == '.':
+        for y_coordinate in range(0, 3):
+            for x_coordinate in range(0, 3):
+                if s.select_is_empty_position(self.current_state[y_coordinate][x_coordinate]):
                     if max:
-                        self.current_state[i][j] = 'O'
+                        self.current_state[y_coordinate][x_coordinate] = c.MAX_TOKEN
                         (minimax_result, _, _) = self.minimax(max=False)
                         if minimax_result > game_result:
                             game_result = minimax_result
-                            x = i
-                            y = j
+                            x, y = y_coordinate, x_coordinate
                     else:
-                        self.current_state[i][j] = 'X'
+                        self.current_state[y_coordinate][x_coordinate] = c.MIN_TOKEN
                         (minimax_result, _, _) = self.minimax(max=True)
                         if minimax_result < game_result:
                             game_result = minimax_result
-                            x = i
-                            y = j
-                    self.current_state[i][j] = '.'
+                            x, y = y_coordinate, x_coordinate
+
+                    self.current_state[y_coordinate][x_coordinate] = c.EMPTY_TOKEN
         return game_result, x, y
 
     # Minimizing for 'X' and maximizing for 'O'
@@ -90,66 +80,61 @@ class Game:
         if end_game:
             return end_game
 
-        for i in range(0, 3):
-            for j in range(0, 3):
-                if self.current_state[i][j] == '.':
+        for y_coordinate in range(0, 3):
+            for x_coordinate in range(0, 3):
+                current_position = self.current_state[y_coordinate][x_coordinate]
+                is_empty = s.select_is_empty_position(current_position)
+                if is_empty:
                     if max:
-                        self.current_state[i][j] = 'O'
+                        self.current_state[y_coordinate][x_coordinate] = c.MAX_TOKEN
                         (alphabeta_result, _, _) = self.alphabeta(alpha, beta, max=False)
                         if alphabeta_result > value:
                             value = alphabeta_result
-                            x, y = i, j
+                            x, y = y_coordinate, x_coordinate
                     else:
-                        self.current_state[i][j] = 'X'
+                        self.current_state[y_coordinate][x_coordinate] = c.MIN_TOKEN
                         (alphabeta_result, _, _) = self.alphabeta(alpha, beta, max=True)
                         if alphabeta_result < value:
                             value = alphabeta_result
-                            x, y = i, j
-                    self.current_state[i][j] = '.'
+                            x, y = y_coordinate, x_coordinate
+                    self.current_state[y_coordinate][x_coordinate] = c.EMPTY_TOKEN
                     if max:
                         if value >= beta:
-                            return (value, x, y)
+                            return value, x, y
                         if value > alpha:
                             alpha = value
                     else:
                         if value <= alpha:
-                            return (value, x, y)
+                            return value, x, y
                         if value < beta:
                             beta = value
-        return (value, x, y)
+        return value, x, y
+
+    def finish_turn(self, x, y):
+        self.current_state[x][y] = self.player_turn
+        self.switch_player()
 
     def play(self, algo=None, player_x=None, player_o=None):
-        if algo == None:
-            algo = self.ALPHABETA
-        if player_x == None:
-            player_x = self.HUMAN
-        if player_o == None:
-            player_o = self.HUMAN
+        algo, player_x, player_o = s.select_play_initial_values(self, algo, player_x, player_o)
+
         while True:
             self.draw_board()
+
             if self.check_end():
                 return
-            start = time.time()
+
             if algo == self.MINIMAX:
-                if self.player_turn == 'X':
-                    (_, x, y) = self.minimax(max=False)
-                else:
-                    (_, x, y) = self.minimax(max=True)
-            else:  # algo == self.ALPHABETA
-                if self.player_turn == 'X':
-                    (m, x, y) = self.alphabeta(max=False)
-                else:
-                    (m, x, y) = self.alphabeta(max=True)
-            end = time.time()
-            if (self.player_turn == 'X' and player_x == self.HUMAN) or (
-                    self.player_turn == 'O' and player_o == self.HUMAN):
+                (_, x, y) = self.minimax(max=s.select_is_max(self))
+            elif algo == self.ALPHABETA:
+                (m, x, y) = self.alphabeta(max=s.select_is_max(self))
+
+            is_human_turn = s.select_is_human_turn(self, player_x, player_o)
+            is_ai_turn = s.select_is_ai_turn(self, player_x, player_o)
+            if is_human_turn:
                 if self.recommend:
-                    print(F'Evaluation time: {round(end - start, 7)}s')
-                    print(F'Recommended move: x = {x}, y = {y}')
+                    o.output_human_turn_recommend(time.time(), x, y)
                 (x, y) = self.input_move()
-            if (self.player_turn == 'X' and player_x == self.AI) or (
-                    self.player_turn == 'O' and player_o == self.AI):
-                print(F'Evaluation time: {round(end - start, 7)}s')
-                print(F'Player {self.player_turn} under AI control plays: x = {x}, y = {y}')
-            self.current_state[x][y] = self.player_turn
-            self.switch_player()
+            if is_ai_turn:
+                o.output_ai_turn_recommend(time.time(), self, x, y)
+
+            self.finish_turn(x=x, y=y)

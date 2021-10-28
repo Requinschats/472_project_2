@@ -97,3 +97,40 @@ def select_is_end(game):
         return None
 
     return c.EMPTY_TOKEN
+
+
+def select_is_valid_move(game, px, py):
+    is_non_empty_space = game.current_state[px][py] != c.EMPTY_TOKEN
+    is_outside_board = px < 0 or px > 2 or py < 0 or py > 2
+    if is_outside_board or is_non_empty_space:
+        return False
+    else:
+        return True
+
+
+def select_is_empty_position(position):
+    return position == c.EMPTY_TOKEN
+
+
+def select_is_ai_turn(game, player_x, player_o):
+    return (game.player_turn == 'X' and player_x == game.AI) or (
+            game.player_turn == 'O' and player_o == game.AI)
+
+
+def select_is_human_turn(game, player_x, player_o):
+    return (game.player_turn == c.MIN_TOKEN and player_x == game.HUMAN) or (
+            game.player_turn == c.MAX_TOKEN and player_o == game.HUMAN)
+
+
+def select_is_max(game):
+    return False if game.player_turn == c.MIN_TOKEN else True
+
+
+def select_play_initial_values(game, algo, player_x, player_o):
+    if algo is None:
+        algo = game.ALPHABETA
+    if player_x is None:
+        player_x = game.HUMAN
+    if player_o is None:
+        player_o = game.HUMAN
+    return algo, player_x, player_o
