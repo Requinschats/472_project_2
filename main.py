@@ -9,9 +9,10 @@ def main():
 
     game = Game(board_parameters=board_parameters, recommend=True)
 
-    game.play(algo=Game.ALPHABETA, player_x=Game.AI, player_o=Game.AI,
+    # game.play(algo=Game.MINIMAX, player_x=Game.AI, player_o=Game.AI,
+    #           board_parameters=board_parameters)
+    game.play(algo=Game.MINIMAX, player_x=Game.AI, player_o=Game.HUMAN,
               board_parameters=board_parameters)
-    # game.play(algo=Game.MINIMAX, player_x=Game.AI, player_o=Game.HUMAN)
 
 
 if __name__ == "__main__":
