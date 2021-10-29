@@ -65,9 +65,10 @@ def select_horizontal_win(game, board_parameters):
 
 
 def select_is_board_full(game, board_parameters):
-    for i in range(0, 3):
-        for j in range(0, 3):
-            if game.current_state[i][j] == c.EMPTY_TOKEN:
+    board_size, blocks, winning_line_size = board_parameters
+    for y_coordinates in range(0, board_size):
+        for x_coordinates in range(0, board_size):
+            if game.current_state[y_coordinates][x_coordinates] == c.EMPTY_TOKEN:
                 return False
     return True
 
