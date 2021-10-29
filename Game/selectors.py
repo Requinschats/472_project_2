@@ -3,17 +3,29 @@ import numpy as np
 import Game.utils as u
 
 
+def select_rows(board):
+    rows = []
+    for row in board:
+        rows.append(row)
+    return rows
+
+
+def select_columns(board):
+    return []
+
+
 def select_board_diagonals(board):
+    return []
     board = np.array(board)
     return [board[::-1, :].diagonal(i) for i in range(-board.shape[0] + 1, board.shape[1])] \
         .extend(board.diagonal(i) for i in range(board.shape[1] - 1, -board.shape[0], -1)) \
         .tolist()
 
 
-def select_is_winning_diagonal(diagonal, diagonal_size):
-    token_to_match = diagonal[0]
+def select_winning_token_by_winning_lines(line_list, diagonal_size):
+    token_to_match = line_list[0]
     matching_count = 1
-    for index, token in diagonal:
+    for index, token in enumerate(line_list):
         if index == 0:
             continue
         elif token == c.EMPTY_TOKEN or token == c.BLOCK_TOKEN:
@@ -25,8 +37,8 @@ def select_is_winning_diagonal(diagonal, diagonal_size):
             matching_count = 1
             token_to_match = token
         if matching_count == diagonal_size:
-            return True
-    return False
+            return token_to_match
+    return None
 
 
 def select_diagonal_win(board, diagonal_size):
@@ -36,23 +48,28 @@ def select_diagonal_win(board, diagonal_size):
     if len(possibly_winning_diagonals) == 0:
         return False
 
-    return any(select_is_winning_diagonal, possibly_winning_diagonals)
+    return any(select_winning_token_by_winning_lines(pwd, diagonal_size) for pwd in
+               possibly_winning_diagonals)
 
 
 def select_vertical_win(game, board_parameters):
-    return False
+    board_size, blocks, winning_line_size = board_parameters
+    columns = select_columns(game.current_state)
+    return any(select_winning_token_by_winning_lines(pwd, winning_line_size) for pwd in columns)
 
 
 def select_horizontal_win(game, board_parameters):
-    return False
+    board_size, blocks, winning_line_size = board_parameters
+    rows = select_rows(game.current_state)
+    return any(select_winning_token_by_winning_lines(pwd, winning_line_size) for pwd in rows)
 
 
 def select_is_board_full(game, board_parameters):
     for i in range(0, 3):
         for j in range(0, 3):
             if game.current_state[i][j] == c.EMPTY_TOKEN:
-                return True
-    return False
+                return False
+    return True
 
 
 def select_next_player(game):
@@ -80,12 +97,12 @@ def select_initial_player():
     return c.MIN_TOKEN
 
 
-def select_end_game(is_end, x, y):
-    if is_end == c.MIN_TOKEN:
+def select_end_game(is_end_token, x, y):
+    if is_end_token == c.MIN_TOKEN:
         return (-1, x, y)
-    if is_end == c.MAX_TOKEN:
+    if is_end_token == c.MAX_TOKEN:
         return (1, x, y)
-    if is_end == c.EMPTY_TOKEN:
+    if is_end_token == c.EMPTY_TOKEN:
         return (0, x, y)
 
 
@@ -99,7 +116,8 @@ def select_end_game_output(game):
             return "It's a tie!"
 
 
-def select_is_end(game, board_parameters):
+def select_is_end_token(game, board_parameters):
+    ## TODO: change return signature
     vertical_win = select_vertical_win(game, board_parameters)
     if vertical_win:
         return vertical_win
@@ -113,9 +131,9 @@ def select_is_end(game, board_parameters):
         return diagonal_win
 
     if select_is_board_full(game, board_parameters):
-        return None
+        return c.EMPTY_TOKEN
 
-    return c.EMPTY_TOKEN
+    return None
 
 
 def select_is_valid_move(game, px, py):
@@ -161,9 +179,9 @@ def select_play_initial_values(game, algo, player_x, player_o):
 def select_heuristic_move(board_parameters, algo, game):
     move = None
     if algo == game.MINIMAX:
-        (_, x, y) = game.minimax(max=select_is_max(game), board_parameters=board_parameters)
+        (_, x, y) = game.minimax(is_max=select_is_max(game), board_parameters=board_parameters)
         move = (_, x, y)
     elif algo == game.ALPHABETA:
-        (m, x, y) = game.alphabeta(max=select_is_max(game), board_parameters=board_parameters)
+        (m, x, y) = game.alphabeta(is_max=select_is_max(game), board_parameters=board_parameters)
         move = (m, x, y)
     return move
