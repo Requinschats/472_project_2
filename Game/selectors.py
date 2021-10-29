@@ -10,58 +10,63 @@ def select_rows(board):
     return rows
 
 
-def select_columns(board):
-    return []
+def select_columns(board, board_size):
+    columns = []
+    column = []
+    for x in range(board_size):
+        for y in range(board_size):
+            column.append(board[y][x])
+        columns.append(column)
+        column = []
+    return columns
 
 
 def select_board_diagonals(board):
-    return []
-    board = np.array(board)
-    return [board[::-1, :].diagonal(i) for i in range(-board.shape[0] + 1, board.shape[1])] \
-        .extend(board.diagonal(i) for i in range(board.shape[1] - 1, -board.shape[0], -1)) \
-        .tolist()
+    diagonals = [board[::-1, :].diagonal(i) for i in range(-board.shape[0] + 1, board.shape[1])]
+    diagonals.extend(board.diagonal(i) for i in range(board.shape[1] - 1, -board.shape[0], -1))
+    return diagonals
 
 
 def select_winning_token_by_winning_lines(line_list, diagonal_size):
-    token_to_match = line_list[0]
+    token_to_match = line_list[0][0]
     matching_count = 1
-    for index, token in enumerate(line_list):
-        if index == 0:
-            continue
-        elif token == c.EMPTY_TOKEN or token == c.BLOCK_TOKEN:
-            matching_count = 1
-            token_to_match = None
-        elif token == token_to_match:
-            matching_count += 1
-        elif token != token_to_match:
-            matching_count = 1
-            token_to_match = token
-        if matching_count == diagonal_size:
-            return token_to_match
+    for line in line_list:
+        for index, token in enumerate(line):
+            if index == 0:
+                continue
+            elif token == c.EMPTY_TOKEN or token == c.BLOCK_TOKEN:
+                matching_count = 1
+                token_to_match = None
+            elif token == token_to_match:
+                matching_count += 1
+            elif token != token_to_match:
+                matching_count = 1
+                token_to_match = token
+            if matching_count == diagonal_size:
+                return token_to_match
     return None
 
 
-def select_diagonal_win(board, diagonal_size):
+def select_diagonal_win(board, board_parameters):
+    board_size, blocks, winning_line_size = board_parameters
     diagonals = select_board_diagonals(board)
-    possibly_winning_diagonals = list(filter(lambda d: len(d) >= diagonal_size, diagonals))
+    possibly_winning_diagonals = list(filter(lambda d: len(d) >= winning_line_size, diagonals))
 
     if len(possibly_winning_diagonals) == 0:
-        return False
-
-    return any(select_winning_token_by_winning_lines(pwd, diagonal_size) for pwd in
-               possibly_winning_diagonals)
+        return None
+    return select_winning_token_by_winning_lines(diagonals, winning_line_size)
 
 
 def select_vertical_win(game, board_parameters):
     board_size, blocks, winning_line_size = board_parameters
-    columns = select_columns(game.current_state)
-    return any(select_winning_token_by_winning_lines(pwd, winning_line_size) for pwd in columns)
+    columns = select_columns(game.current_state, board_size)
+    return select_winning_token_by_winning_lines(columns, winning_line_size)
 
 
 def select_horizontal_win(game, board_parameters):
     board_size, blocks, winning_line_size = board_parameters
     rows = select_rows(game.current_state)
-    return any(select_winning_token_by_winning_lines(pwd, winning_line_size) for pwd in rows)
+    return select_winning_token_by_winning_lines(rows, winning_line_size)
 
 
 def select_is_board_full(game, board_parameters):
@@ -84,7 +89,7 @@ def select_next_player(game):
 def select_initial_state(board_parameters):
     board_size, blocks, winning_line_size = board_parameters
     board_range = range(board_size)
-    board = [[None for y in board_range] for x in board_range]
+    board = np.zeros((board_size, board_size), dtype=str)
     for y_coordinate in board_range:
         for x_coordinate in board_range:
             if (y_coordinate, x_coordinate) in blocks:
@@ -118,7 +123,6 @@ def select_end_game_output(game):
 
 
 def select_is_end_token(game, board_parameters):
-    ## TODO: change return signature
     vertical_win = select_vertical_win(game, board_parameters)
     if vertical_win:
         return vertical_win
@@ -127,7 +131,7 @@ def select_is_end_token(game, board_parameters):
     if vertical_win:
         return horizontal_win
 
-    diagonal_win = select_diagonal_win(game, board_parameters)
+    diagonal_win = select_diagonal_win(game.current_state, board_parameters)
     if diagonal_win:
         return diagonal_win
 
@@ -137,8 +141,9 @@ def select_is_end_token(game, board_parameters):
     return None
 
 
-def select_is_valid_move(game, px, py):
-    is_outside_board = px < 0 or px > 2 or py < 0 or py > 2
+def select_is_valid_move(game, px, py, board_parameters):
+    board_size, blocks, winning_line_size = board_parameters
+    is_outside_board = px < 0 or px >= board_size or py < 0 or py >= board_size
     if is_outside_board:
         return False
 
