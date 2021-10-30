@@ -15,7 +15,6 @@ class Game:
 
     def initialize_game(self, board_parameters):
         self.current_state = s.select_initial_state(board_parameters)
-        print(self.current_state)
         self.player_turn = s.select_initial_player()
 
     def is_valid_move(self, px, py, board_parameters):
@@ -23,7 +22,9 @@ class Game:
 
     def check_end(self, board_parameters):
         self.result = s.select_is_end_token(self, board_parameters)
-        print(s.select_end_game_output(self))
+        end_game_output = s.select_end_game_output(self)
+        if end_game_output:
+            print(end_game_output)
         if self.result is not None:
             self.initialize_game(board_parameters)
         return self.result
@@ -124,9 +125,10 @@ class Game:
         algo, player_x, player_o = s.select_play_initial_values(self, algo, player_x, player_o)
         x, y = None, None
         while True:
-            o.draw_game_board(self, board_parameters)
+            if not mock_inputs:
+                o.draw_game_board(self, board_parameters)
             if self.check_end(board_parameters=board_parameters):
-                return self.check_end(board_parameters=board_parameters)
+                return
             if s.select_is_human_turn(self, player_x, player_o):
                 if mock_inputs:
                     move = mock_inputs.pop()

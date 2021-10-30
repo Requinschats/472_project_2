@@ -15,7 +15,7 @@ def select_columns(board, board_size):
     column = []
     for x in range(board_size):
         for y in range(board_size):
-            column.append(board[y][x])
+            column.append(board[x][y])
         columns.append(column)
         column = []
     return columns
@@ -28,6 +28,8 @@ def select_board_diagonals(board):
 
 
 def select_winning_token_by_winning_lines(line_list, diagonal_size):
+    if np.array_equal(line_list[0], ['@', '.', 'O', 'O']):
+        print("column found")
     token_to_match = line_list[0][0]
     matching_count = 1
     for line in line_list:

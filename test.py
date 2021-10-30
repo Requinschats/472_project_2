@@ -21,11 +21,9 @@ def test_row_win():
 def test_column_win():
     return game.play(algo=Game.MINIMAX, player_x=Game.HUMAN, player_o=Game.HUMAN,
                      board_parameters=board_parameters,
-                     mock_inputs=[[1, 0], [0, 2], [1, 1], [0, 2], [1, 2]])
+                     mock_inputs=[[1, 0], [0, 2], [1, 1], [0, 3], [1, 2]])
 
 
-outcome1 = test_diagonal_win()
-outcome2 = test_row_win()
-# outcome3 = test_column_win()
-
-print(outcome1)
+test_diagonal_win()
+test_row_win()
+test_column_win()
