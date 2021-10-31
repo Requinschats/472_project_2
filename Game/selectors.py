@@ -28,14 +28,15 @@ def select_board_diagonals(board):
 
 
 def select_winning_token_by_winning_lines(line_list, diagonal_size):
-    if np.array_equal(line_list[0], ['@', '.', 'O', 'O']):
-        print("column found")
-    token_to_match = line_list[0][0]
-    matching_count = 1
     for line in line_list:
+        token_to_match = None
+        matching_count = 1
         for index, token in enumerate(line):
+            if np.array_equal(line, ['X', 'X', 'X', '.']):
+                print(token)
+                print(token_to_match)
             if index == 0:
-                continue
+                token
             elif token == c.EMPTY_TOKEN or token == c.BLOCK_TOKEN:
                 matching_count = 1
                 token_to_match = None
