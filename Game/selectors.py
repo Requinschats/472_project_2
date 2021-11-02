@@ -1,4 +1,5 @@
 import Game.constants as c
+import Game.outputs as o
 import numpy as np
 import time
 import os
@@ -188,6 +189,7 @@ def select_play_initial_values(game, algo, player_x, player_o):
 
 
 def select_heuristic_move(board_parameters, algo, game):
+    print("waiting for AI move")
     move = None
     if algo == game.MINIMAX:
         (_, x, y) = game.minimax(is_max=select_is_max(game), board_parameters=board_parameters,
@@ -220,5 +222,19 @@ def select_initial_statistics():
 def select_list_average(array_list):
     if len(array_list) == 0:
         return 0
-    
+
     return sum(array_list) / len(array_list)
+
+
+def select_next_move_from_mock_inputs(mock_inputs):
+    move = mock_inputs.pop()
+    return move[0], move[1]
+
+
+def select_human_turn_move(game, mock_inputs, board_parameters, recommended_coordinates):
+    x, y = recommended_coordinates
+    if mock_inputs:
+        return select_next_move_from_mock_inputs(mock_inputs)
+    else:
+        o.output_human_turn_recommend(game.recommend, time.time(), x, y)
+        return game.input_move(board_parameters=board_parameters)
