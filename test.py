@@ -29,8 +29,16 @@ def test_minimax_maximum_depth_reached():
                      board_parameters=m.input_mock_game_settings_short_depth())
 
 
+def test_minimax_maximum_computing_time_reached():
+    return game.play(algo=Game.MINIMAX, player_x=Game.AI, player_o=Game.AI,
+                     board_parameters=m.input_mock_game_settings_short_computing_time())
+
+
+# game rules
 test_diagonal_win()
 test_row_win()
 test_column_win()
 
+# heuristic constraints
 test_minimax_maximum_depth_reached()
+test_minimax_maximum_computing_time_reached()

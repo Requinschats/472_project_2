@@ -205,4 +205,5 @@ def select_is_heuristic_restriction_met(current_depth, maximum_depth, start_time
                                         maximum_computing_time):
     has_exceeded_maximum_depth = current_depth >= maximum_depth
     is_time_elapsed = (time.time() - start_time) >= maximum_computing_time
+    print((time.time() - start_time))
     return has_exceeded_maximum_depth or is_time_elapsed
