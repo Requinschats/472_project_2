@@ -2,7 +2,7 @@ import time
 
 
 def draw_game_board(game, board_parameters):
-    board_size, _, _ = board_parameters
+    board_size, blocks, winning_line_size, maximum_depths, maximum_computing_time = board_parameters
     print()
     for y in range(board_size):
         for x in range(board_size):
@@ -80,8 +80,21 @@ def input_winning_line_size():
     return winning_line_size
 
 
+def input_maximum_depths():
+    p1_maximum_depth = int(input("Enter p1 search maximum depth: "))
+    p2_maximum_depth = int(input("Enter p2 search maximum depth: "))
+    return p1_maximum_depth, p2_maximum_depth
+
+
+def input_maximum_computing_time():
+    maximum_computing_time = int(input("Enter maximum computing time (in seconds): "))
+    return maximum_computing_time
+
+
 def input_game_settings():
     board_size = input_board_size()
     blocks = input_blocks(board_size)
     winning_line_size = input_winning_line_size()
-    return board_size, blocks, winning_line_size
+    maximum_depths = input_maximum_depths()
+    maximum_computing_time = input_maximum_computing_time()
+    return board_size, blocks, winning_line_size, maximum_depths, maximum_computing_time

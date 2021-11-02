@@ -1,5 +1,6 @@
 import Game.constants as c
 import numpy as np
+import time
 import Game.utils as u
 
 
@@ -52,7 +53,7 @@ def select_winning_token_by_winning_lines(line_list, diagonal_size):
 
 
 def select_diagonal_win(board, board_parameters):
-    board_size, blocks, winning_line_size = board_parameters
+    board_size, blocks, winning_line_size, maximum_depths, maximum_computing_time = board_parameters
     diagonals = select_board_diagonals(board)
     possibly_winning_diagonals = list(filter(lambda d: len(d) >= winning_line_size, diagonals))
 
@@ -62,19 +63,19 @@ def select_diagonal_win(board, board_parameters):
 
 
 def select_vertical_win(game, board_parameters):
-    board_size, blocks, winning_line_size = board_parameters
+    board_size, blocks, winning_line_size, maximum_depths, maximum_computing_time = board_parameters
     columns = select_columns(game.current_state, board_size)
     return select_winning_token_by_winning_lines(columns, winning_line_size)
 
 
 def select_horizontal_win(game, board_parameters):
-    board_size, blocks, winning_line_size = board_parameters
+    board_size, blocks, winning_line_size, maximum_depths, maximum_computing_time = board_parameters
     rows = select_rows(game.current_state, board_size)
     return select_winning_token_by_winning_lines(rows, winning_line_size)
 
 
 def select_is_board_full(game, board_parameters):
-    board_size, blocks, winning_line_size = board_parameters
+    board_size, blocks, winning_line_size, maximum_depths, maximum_computing_time = board_parameters
     for y_coordinates in range(0, board_size):
         for x_coordinates in range(0, board_size):
             if game.current_state[y_coordinates][x_coordinates] == c.EMPTY_TOKEN:
@@ -91,7 +92,7 @@ def select_next_player(game):
 
 
 def select_initial_state(board_parameters):
-    board_size, blocks, winning_line_size = board_parameters
+    board_size, blocks, winning_line_size, maximum_depths, maximum_computing_time = board_parameters
     board_range = range(board_size)
     board = np.zeros((board_size, board_size), dtype=str)
     for y_coordinate in board_range:
@@ -146,7 +147,7 @@ def select_is_end_token(game, board_parameters):
 
 
 def select_is_valid_move(game, px, py, board_parameters):
-    board_size, blocks, winning_line_size = board_parameters
+    board_size, blocks, winning_line_size, maximum_depths, maximum_computing_time = board_parameters
     is_outside_board = px < 0 or px >= board_size or py < 0 or py >= board_size
     if is_outside_board:
         return False
@@ -189,9 +190,19 @@ def select_play_initial_values(game, algo, player_x, player_o):
 def select_heuristic_move(board_parameters, algo, game):
     move = None
     if algo == game.MINIMAX:
-        (_, x, y) = game.minimax(is_max=select_is_max(game), board_parameters=board_parameters)
+
+        (_, x, y) = game.minimax(is_max=select_is_max(game), board_parameters=board_parameters,
+                                 start_time=time.time())
         move = (_, x, y)
     elif algo == game.ALPHABETA:
-        (m, x, y) = game.alphabeta(is_max=select_is_max(game), board_parameters=board_parameters)
+        (m, x, y) = game.alphabeta(is_max=select_is_max(game), board_parameters=board_parameters,
+                                   start_time=time.time())
         move = (m, x, y)
     return move
+
+
+def select_is_heuristic_restriction_met(current_depth, maximum_depth, start_time,
+                                        maximum_computing_time):
+    has_exceeded_maximum_depth = current_depth >= maximum_depth
+    is_time_elapsed = (time.time() - start_time) >= maximum_computing_time
+    return has_exceeded_maximum_depth or is_time_elapsed

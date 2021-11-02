@@ -40,16 +40,20 @@ class Game:
     def switch_player(self):
         return s.select_next_player(self)
 
-    def minimax(self, is_max=False, board_parameters=None):
+    def minimax(self, is_max=False, board_parameters=None, current_depth=0, start_time=None):
+        board_size, blocks, winning_line_size, maximum_depths, maximum_computing_time = board_parameters
+        board_range = range(board_size)
+
         value = 2 if not is_max else -2  # -1 = X wins, 1 = X loss
         x, y = None, None
+
+        if s.select_is_heuristic_restriction_met(current_depth, maximum_depths[0], start_time,
+                                                 maximum_computing_time):
+            return value, x, y
 
         end_game = s.select_end_game(s.select_is_end_token(self, board_parameters), x, y)
         if end_game:
             return end_game
-
-        board_size, blocks, winning_line_size = board_parameters
-        board_range = range(board_size)
 
         for y_coordinate in board_range:
             for x_coordinate in board_range:
@@ -57,14 +61,18 @@ class Game:
                     if is_max:
                         self.current_state[y_coordinate][x_coordinate] = c.MAX_TOKEN
                         (minimax_result, _, _) = self.minimax(is_max=False,
-                                                              board_parameters=board_parameters)
+                                                              board_parameters=board_parameters,
+                                                              current_depth=current_depth + 1,
+                                                              start_time=start_time)
                         if minimax_result > value:
                             value = minimax_result
                             x, y = y_coordinate, x_coordinate
                     else:
                         self.current_state[y_coordinate][x_coordinate] = c.MIN_TOKEN
                         (minimax_result, _, _) = self.minimax(is_max=True,
-                                                              board_parameters=board_parameters)
+                                                              board_parameters=board_parameters,
+                                                              current_depth=current_depth + 1,
+                                                              start_time=start_time)
                         if minimax_result < value:
                             value = minimax_result
                             x, y = y_coordinate, x_coordinate
@@ -73,13 +81,17 @@ class Game:
         return value, x, y
 
     # Minimizing for 'X' and maximizing for 'O'
-    def alphabeta(self, alpha=-2, beta=2, is_max=False, board_parameters=None):
+    def alphabeta(self, alpha=-2, beta=2, is_max=False, board_parameters=None, current_depth=0,
+                  start_time=None):
         value = 2 if not is_max else -2
         x, y = None, None
         end_game = s.select_end_game(s.select_is_end_token(self, board_parameters), x, y)
-
-        board_size, blocks, winning_line_size = board_parameters
+        board_size, blocks, winning_line_size, maximum_depths, maximum_computing_time = board_parameters
         board_range = range(board_size)
+
+        if s.select_is_heuristic_restriction_met(current_depth, maximum_depths[0], start_time,
+                                                 maximum_computing_time):
+            return value, x, y
 
         if end_game:
             return end_game
@@ -92,14 +104,16 @@ class Game:
                     if is_max:
                         self.current_state[y_coordinate][x_coordinate] = c.MAX_TOKEN
                         (alphabeta_result, _, _) = self.alphabeta(alpha, beta, is_max=False,
-                                                                  board_parameters=board_parameters)
+                                                                  board_parameters=board_parameters,
+                                                                  start_time=start_time)
                         if alphabeta_result > value:
                             value = alphabeta_result
                             x, y = y_coordinate, x_coordinate
                     else:
                         self.current_state[y_coordinate][x_coordinate] = c.MIN_TOKEN
                         (alphabeta_result, _, _) = self.alphabeta(alpha, beta, is_max=True,
-                                                                  board_parameters=board_parameters)
+                                                                  board_parameters=board_parameters,
+                                                                  start_time=start_time)
                         if alphabeta_result < value:
                             value = alphabeta_result
                             x, y = y_coordinate, x_coordinate

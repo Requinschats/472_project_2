@@ -24,6 +24,13 @@ def test_column_win():
                      mock_inputs=[[1, 0], [0, 2], [1, 1], [0, 3], [1, 2]])
 
 
+def test_minimax_maximum_depth_reached():
+    return game.play(algo=Game.MINIMAX, player_x=Game.AI, player_o=Game.AI,
+                     board_parameters=m.input_mock_game_settings_short_depth())
+
+
 test_diagonal_win()
 test_row_win()
 test_column_win()
+
+test_minimax_maximum_depth_reached()
