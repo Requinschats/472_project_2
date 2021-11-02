@@ -31,8 +31,6 @@ class Game:
         end_game_output = s.select_end_game_output(self)
         if end_game_output:
             print(end_game_output)
-        if self.result is not None:
-            self.initialize_game(board_parameters)
         return self.result
 
     def input_move(self, board_parameters):
@@ -45,6 +43,26 @@ class Game:
 
     def switch_player(self):
         return s.select_next_player(self)
+
+    def add_evaluation_time(self, start_time):
+        self.statistics["evaluation_times"].append(time.time() - start_time)
+
+    def increment_states_count(self):
+        self.statistics["states_evaluated"] += 1
+
+    def increment_depth_state_count(self, depth):
+        if depth in self.statistics["state_count_per_depth"]:
+            self.statistics["state_count_per_depth"][depth] += 1
+        else:
+            self.statistics["state_count_per_depth"][depth] = 1
+
+    def increment_move_count(self):
+        self.statistics["move_count"] += 1
+
+    def update_statistics_after_state_evaluation(self, state_evaluation_start_time, current_depth):
+        self.increment_states_count()
+        self.add_evaluation_time(start_time=state_evaluation_start_time)
+        self.increment_depth_state_count(depth=current_depth)
 
     def minimax(self, is_max=False, board_parameters=None, current_depth=0, start_time=None):
         board_size, blocks, winning_line_size, maximum_depths, maximum_computing_time = board_parameters
@@ -70,18 +88,25 @@ class Game:
                                                               board_parameters=board_parameters,
                                                               current_depth=current_depth + 1,
                                                               start_time=start_time)
+                        state_evaluation_start_time = time.time()
                         if minimax_result > value:
                             value = minimax_result
                             x, y = y_coordinate, x_coordinate
+                        self.update_statistics_after_state_evaluation(state_evaluation_start_time,
+                                                                      current_depth)
+
                     else:
                         self.current_state[y_coordinate][x_coordinate] = c.MIN_TOKEN
                         (minimax_result, _, _) = self.minimax(is_max=True,
                                                               board_parameters=board_parameters,
                                                               current_depth=current_depth + 1,
                                                               start_time=start_time)
+                        state_evaluation_start_time = time.time()
                         if minimax_result < value:
                             value = minimax_result
                             x, y = y_coordinate, x_coordinate
+                        self.update_statistics_after_state_evaluation(state_evaluation_start_time,
+                                                                      current_depth)
 
                     self.current_state[y_coordinate][x_coordinate] = c.EMPTY_TOKEN
         return value, x, y
@@ -112,17 +137,24 @@ class Game:
                         (alphabeta_result, _, _) = self.alphabeta(alpha, beta, is_max=False,
                                                                   board_parameters=board_parameters,
                                                                   start_time=start_time)
+                        state_evaluation_start_time = time.time()
                         if alphabeta_result > value:
                             value = alphabeta_result
                             x, y = y_coordinate, x_coordinate
+                        self.update_statistics_after_state_evaluation(state_evaluation_start_time,
+                                                                      current_depth)
                     else:
                         self.current_state[y_coordinate][x_coordinate] = c.MIN_TOKEN
                         (alphabeta_result, _, _) = self.alphabeta(alpha, beta, is_max=True,
                                                                   board_parameters=board_parameters,
                                                                   start_time=start_time)
+                        state_evaluation_start_time = time.time()
                         if alphabeta_result < value:
                             value = alphabeta_result
                             x, y = y_coordinate, x_coordinate
+                        self.update_statistics_after_state_evaluation(state_evaluation_start_time,
+                                                                      current_depth)
+
                     self.current_state[y_coordinate][x_coordinate] = c.EMPTY_TOKEN
                     if is_max:
                         if value >= beta:
@@ -137,6 +169,7 @@ class Game:
         return value, x, y
 
     def finish_turn(self, x, y):
+        self.increment_move_count()
         self.current_state[x][y] = self.player_turn
         self.switch_player()
 
@@ -155,6 +188,8 @@ class Game:
             game_result = self.check_end(board_parameters=board_parameters)
             if game_result:
                 go.output_game_trace_end(file, game_result, self.statistics)
+                if self.result is not None:
+                    self.initialize_game(board_parameters)
                 return
 
             if s.select_is_human_turn(self, player_x, player_o):

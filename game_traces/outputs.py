@@ -41,8 +41,8 @@ def output_move_to_game_trace(file, move_coordinates, evaluation_time, game, boa
 
 def output_state_count_per_depth(file, state_count_per_depth):
     file.write("\nStates evaluated for each depth: ")
-    for depth, state_count in state_count_per_depth.items():
-        file.write("Depth: " + depth + ", state count: " + state_count + " ")
+    for depth, state_count in sorted(state_count_per_depth.items()):
+        file.write("Depth: " + str(depth) + ", state count: " + str(state_count) + " ")
 
 
 def output_game_trace_statistics(file, statistics):
