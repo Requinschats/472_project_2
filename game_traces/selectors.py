@@ -1,4 +1,5 @@
 import os
+import Game.constants as gc
 
 
 def select_game_traces_file(board_parameters):
@@ -25,3 +26,12 @@ def select_player_text_from_token(player):
         return "HUMAN"
     if player == 3:
         return "AI"
+
+
+def select_player_from_token(token):
+    if token == gc.EMPTY_TOKEN:
+        return "Tie"
+    if token == gc.MAX_TOKEN:
+        return "Max"
+    if token == gc.MIN_TOKEN:
+        return "Min"

@@ -205,3 +205,20 @@ def select_is_heuristic_restriction_met(current_depth, maximum_depth, start_time
     has_exceeded_maximum_depth = current_depth >= maximum_depth
     is_time_elapsed = (time.time() - start_time) >= maximum_computing_time
     return has_exceeded_maximum_depth or is_time_elapsed
+
+
+def select_initial_statistics():
+    return {
+        "evaluation_times": [],
+        "states_evaluated": 0,
+        "average_move_depths": [],
+        "state_count_per_depth": {},
+        "move_count": 0
+    }
+
+
+def select_list_average(array_list):
+    if len(array_list) == 0:
+        return 0
+    
+    return sum(array_list) / len(array_list)

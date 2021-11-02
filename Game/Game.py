@@ -11,13 +11,17 @@ class Game:
     MINIMAX, ALPHABETA = 0, 1
     HUMAN, AI = 2, 3
 
+    statistics = {}
+
     def __init__(self, board_parameters, recommend=True):
         self.initialize_game(board_parameters)
         self.recommend = recommend
+        self.statistics = s.select_initial_statistics()
 
     def initialize_game(self, board_parameters):
         self.current_state = s.select_initial_state(board_parameters)
         self.player_turn = s.select_initial_player()
+        self.statistics = s.select_initial_statistics()
 
     def is_valid_move(self, px, py, board_parameters):
         return s.select_is_valid_move(self, px, py, board_parameters)
@@ -148,8 +152,9 @@ class Game:
             if not mock_inputs:
                 o.draw_game_board(self, board_parameters)
 
-            if self.check_end(board_parameters=board_parameters):
-                go.output_game_trace_end(file,)
+            game_result = self.check_end(board_parameters=board_parameters)
+            if game_result:
+                go.output_game_trace_end(file, game_result, self.statistics)
                 return
 
             if s.select_is_human_turn(self, player_x, player_o):

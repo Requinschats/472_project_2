@@ -1,4 +1,5 @@
 import game_traces.selectors as s
+import Game.selectors as gs
 
 
 def output_game_trace_initial_values(file, board_parameters, game_parameters, game):
@@ -38,9 +39,29 @@ def output_move_to_game_trace(file, move_coordinates, evaluation_time, game, boa
     output_game_trace_board(file, game, board_parameters)
 
 
+def output_state_count_per_depth(file, state_count_per_depth):
+    file.write("\nStates evaluated for each depth: ")
+    for depth, state_count in state_count_per_depth.items():
+        file.write("Depth: " + depth + ", state count: " + state_count + " ")
+
+
+def output_game_trace_statistics(file, statistics):
+    average_evaluation_time = gs.select_list_average(statistics["evaluation_times"])
+    file.write("\nAverage evaluation time: " + str(average_evaluation_time))
+
+    file.write("\nNumber of states evaluated: " + str(statistics["states_evaluated"]))
+
+    average_per_move_average_depth = gs.select_list_average(statistics["average_move_depths"])
+    file.write("\nAverage of per-move average depth: " + str(average_per_move_average_depth))
+
+    output_state_count_per_depth(file, statistics["state_count_per_depth"])
+
+    file.write("\nTotal number of moves: " + str(statistics["move_count"]))
+
+
 def output_game_trace_end(file, winner, end_game_statistics):
     if not file:
         return
 
-    file.write("\nWinner: " + str(winner))
-    file.write(end_game_statistics)
+    file.write("\nWinner: " + str(s.select_player_from_token(winner)))
+    output_game_trace_statistics(file, end_game_statistics)
