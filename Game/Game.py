@@ -135,9 +135,12 @@ class Game:
         self.switch_player()
 
     def play(self, algo=None, player_x=None, player_o=None, board_parameters=None,
-             mock_inputs=None):
+             mock_inputs=None, file=None):
         algo, player_x, player_o = s.select_play_initial_values(self, algo, player_x, player_o)
         x, y = None, None
+
+        o.output_game_trace_initial_values(file, board_parameters, (player_x, player_o, algo))
+
         while True:
             if not mock_inputs:
                 o.draw_game_board(self, board_parameters)
