@@ -3,10 +3,14 @@ import numpy as np
 import Game.utils as u
 
 
-def select_rows(board):
+def select_rows(board, board_size):
     rows = []
-    for row in board:
+    row = []
+    for x in range(board_size):
+        for y in range(board_size):
+            row.append(board[y][x])
         rows.append(row)
+        row = []
     return rows
 
 
@@ -32,11 +36,8 @@ def select_winning_token_by_winning_lines(line_list, diagonal_size):
         token_to_match = None
         matching_count = 1
         for index, token in enumerate(line):
-            if np.array_equal(line, ['X', 'X', 'X', '.']):
-                print(token)
-                print(token_to_match)
             if index == 0:
-                token
+                token_to_match = token
             elif token == c.EMPTY_TOKEN or token == c.BLOCK_TOKEN:
                 matching_count = 1
                 token_to_match = None
@@ -68,7 +69,7 @@ def select_vertical_win(game, board_parameters):
 
 def select_horizontal_win(game, board_parameters):
     board_size, blocks, winning_line_size = board_parameters
-    rows = select_rows(game.current_state)
+    rows = select_rows(game.current_state, board_size)
     return select_winning_token_by_winning_lines(rows, winning_line_size)
 
 
@@ -131,7 +132,7 @@ def select_is_end_token(game, board_parameters):
         return vertical_win
 
     horizontal_win = select_horizontal_win(game, board_parameters)
-    if vertical_win:
+    if horizontal_win:
         return horizontal_win
 
     diagonal_win = select_diagonal_win(game.current_state, board_parameters)
