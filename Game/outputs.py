@@ -99,19 +99,3 @@ def input_game_settings():
     maximum_depths = input_maximum_depths()
     maximum_computing_time = input_maximum_computing_time()
     return board_size, blocks, winning_line_size, maximum_depths, maximum_computing_time
-
-
-def output_game_trace_initial_values(file, board_parameters, game_parameters):
-    if not file:
-        return
-
-    board_size, blocks, winning_line_size, maximum_depths, maximum_computing_time = board_parameters
-    player_x, player_o, algo = game_parameters
-    file.write("Board size: " + str(board_size))
-    file.write("\nBlocks: " + str(blocks))
-    file.write("\nWinning line size: " + str(winning_line_size))
-    file.write("\nMaximum depths: " + str(maximum_depths))
-    file.write("\nMaximum computing time: " + str(maximum_computing_time))
-    file.write("\nPlayer x: " + str(s.select_player_text_from_token(player_x)))
-    file.write("\nPlayer 0: " + str(s.select_player_text_from_token(player_o)))
-    file.write("\nAlgorithm: " + str(s.select_algo_name_from_token(algo)))

@@ -4,6 +4,8 @@ import Game.selectors as s
 import Game.outputs as o
 import Game.constants as c
 
+import game_traces.outputs as go
+
 
 class Game:
     MINIMAX, ALPHABETA = 0, 1
@@ -139,13 +141,17 @@ class Game:
         algo, player_x, player_o = s.select_play_initial_values(self, algo, player_x, player_o)
         x, y = None, None
 
-        o.output_game_trace_initial_values(file, board_parameters, (player_x, player_o, algo))
+        go.output_game_trace_initial_values(file, board_parameters, (player_x, player_o, algo),
+                                            self)
 
         while True:
             if not mock_inputs:
                 o.draw_game_board(self, board_parameters)
+
             if self.check_end(board_parameters=board_parameters):
+                go.output_game_trace_end(file,)
                 return
+
             if s.select_is_human_turn(self, player_x, player_o):
                 if mock_inputs:
                     move = mock_inputs.pop()
@@ -158,4 +164,5 @@ class Game:
                 (m, x, y) = s.select_heuristic_move(board_parameters, algo, self)
                 o.output_ai_turn_recommend(time.time(), self, x, y)
 
+            go.output_move_to_game_trace(file, (x, y), "1s", self, board_parameters)
             self.finish_turn(x=x, y=y)
