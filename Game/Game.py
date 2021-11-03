@@ -64,6 +64,10 @@ class Game:
         self.add_evaluation_time(start_time=state_evaluation_start_time)
         self.increment_depth_state_count(depth=current_depth)
 
+    def set_current_state(self, x_coordinate, y_coordinate, is_max):
+        self.current_state[y_coordinate][
+            x_coordinate] = c.MAX_TOKEN if is_max else c.MIN_TOKEN
+
     def evaluate_state(self, current_coordinates,
                        best_coordinates, child_minimax_result, best_value, current_depth, is_max):
         state_evaluation_start_time = time.time()
@@ -93,28 +97,26 @@ class Game:
         for y_coordinate in range(board_size):
             for x_coordinate in range(board_size):
                 if s.select_is_empty_position(self.current_state[y_coordinate][x_coordinate]):
-                    self.current_state[y_coordinate][
-                        x_coordinate] = c.MAX_TOKEN if is_max else c.MIN_TOKEN
-                    (minimax_result, _, _) = self.minimax(is_max=False if is_max else True,
-                                                          board_parameters=board_parameters,
-                                                          current_depth=current_depth + 1,
-                                                          start_time=start_time)
+                    self.set_current_state(x_coordinate, y_coordinate, is_max)
+                    (child_result, _, _) = self.minimax(False if is_max else True,
+                                                        board_parameters, current_depth + 1,
+                                                        start_time)
                     value, x, y = self.evaluate_state((x_coordinate, y_coordinate), (x, y),
-                                                      minimax_result, value, current_depth,
+                                                      child_result, value, current_depth,
                                                       is_max)
                     self.current_state[y_coordinate][x_coordinate] = c.EMPTY_TOKEN
         return value, x, y
 
     def alphabeta(self, alpha=-2, beta=2, is_max=False, board_parameters=None, current_depth=0,
                   start_time=None):
-        value = 2 if not is_max else -2
+        best_value = 2 if not is_max else -2
         x, y = None, None
         end_game = s.select_end_game(s.select_is_end_token(self, board_parameters), x, y)
         board_size, blocks, winning_line_size, maximum_depths, maximum_computing_time = board_parameters
 
         if s.select_is_heuristic_restriction_met(current_depth, maximum_depths[0], start_time,
                                                  maximum_computing_time):
-            return value, x, y
+            return best_value, x, y
 
         if end_game: return end_game
 
@@ -123,24 +125,22 @@ class Game:
                 current_position = self.current_state[y_coordinate][x_coordinate]
                 is_empty = s.select_is_empty_position(current_position)
                 if is_empty:
-                    self.current_state[y_coordinate][
-                        x_coordinate] = c.MAX_TOKEN if is_max else c.MIN_TOKEN
-                    (minimax_result, _, _) = self.minimax(is_max=False if is_max else True,
-                                                          board_parameters=board_parameters,
-                                                          current_depth=current_depth + 1,
-                                                          start_time=start_time)
-                    value, x, y = self.evaluate_state((x_coordinate, y_coordinate), (x, y),
-                                                      minimax_result, value, current_depth,
-                                                      is_max)
+                    self.set_current_state(x_coordinate, y_coordinate, is_max)
+                    (child_result, _, _) = self.minimax(False if is_max else True,
+                                                        board_parameters, current_depth + 1,
+                                                        start_time)
+                    best_value, x, y = self.evaluate_state((x_coordinate, y_coordinate), (x, y),
+                                                           child_result, best_value, current_depth,
+                                                           is_max)
                     self.current_state[y_coordinate][x_coordinate] = c.EMPTY_TOKEN
 
                     if is_max:
-                        if value >= beta: return value, x, y
-                        if value > alpha: alpha = value
+                        if best_value >= beta: return best_value, x, y
+                        if best_value > alpha: alpha = best_value
                     else:
-                        if value <= alpha: return value, x, y
-                        if value < beta: beta = value
-        return value, x, y
+                        if best_value <= alpha: return best_value, x, y
+                        if best_value < beta: beta = best_value
+        return best_value, x, y
 
     def finish_turn(self, x, y, file, board_parameters):
         go.output_move_to_game_trace(file, (x, y), "1s", self, board_parameters)
