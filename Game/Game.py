@@ -103,9 +103,6 @@ class Game:
                                                        (False if is_max else True, board_parameters,
                                                         current_depth + 1, start_time),
                                                        (current_depth, maximum_depths[0]))
-                    print("------------")
-                    print(best_value)
-                    print(child_value)
                     best_value, top_x_coordinate, top_y_coordinate = self.select_next_best_state(
                         (x_coordinate_evaluate, y_coordinate_evaluate),
                         (top_x_coordinate, top_y_coordinate),
