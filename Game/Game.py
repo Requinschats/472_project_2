@@ -99,10 +99,11 @@ class Game:
                         self.current_state[y_coordinate_evaluate][x_coordinate_evaluate]):
                     self.set_current_state(x_coordinate_evaluate, y_coordinate_evaluate, is_max)
 
-                    child_value = s.select_child_value(self,
-                                                       (False if is_max else True, board_parameters,
-                                                        current_depth + 1, start_time),
-                                                       (current_depth, maximum_depths[0]))
+                    child_value = s.select_mini_max_child_value(self,
+                                                                (False if is_max else True,
+                                                                 board_parameters,
+                                                                 current_depth + 1, start_time),
+                                                                (current_depth, maximum_depths[0]))
                     best_value, top_x_coordinate, top_y_coordinate = self.select_next_best_state(
                         (x_coordinate_evaluate, y_coordinate_evaluate),
                         (top_x_coordinate, top_y_coordinate),
@@ -111,42 +112,44 @@ class Game:
                     self.current_state[y_coordinate_evaluate][x_coordinate_evaluate] = c.EMPTY_TOKEN
         return best_value, top_x_coordinate, top_y_coordinate
 
-    def alphabeta(self, alpha=-2, beta=2, is_max=False, board_parameters=None, current_depth=0,
-                  start_time=None):
-        best_value = 2 if not is_max else -2
-        x, y = None, None
-        end_game = s.select_end_game(s.select_is_end_token(self, board_parameters), x, y)
+    def alphabeta(self, alpha=c.HEURISTIC_MAX_DEFAULT_VALUE, beta=c.HEURISTIC_MIN_DEFAULT_VALUE,
+                  is_max=False, board_parameters=None, current_depth=0, start_time=None):
         board_size, blocks, winning_line_size, maximum_depths, maximum_computing_time = board_parameters
+        best_value = c.HEURISTIC_MIN_DEFAULT_VALUE if not is_max else c.HEURISTIC_MAX_DEFAULT_VALUE
+        top_x_coordinate, top_y_coordinate = None, None
 
-        if s.select_is_time_elapsed(current_depth, maximum_depths[0], start_time,
-                                    maximum_computing_time):
-            return best_value, x, y
-
+        end_game = s.select_end_game(s.select_is_end_token(self, board_parameters),
+                                     top_x_coordinate, top_y_coordinate)
         if end_game: return end_game
 
-        for y_coordinate in range(board_size):
-            for x_coordinate in range(board_size):
-                current_position = self.current_state[y_coordinate][x_coordinate]
+        for y_coordinate_evaluate in range(board_size):
+            for x_coordinate_evaluate in range(board_size):
+                current_position = self.current_state[y_coordinate_evaluate][x_coordinate_evaluate]
                 is_empty = s.select_is_empty_position(current_position)
                 if is_empty:
-                    self.set_current_state(x_coordinate, y_coordinate, is_max)
-                    (child_result, _, _) = self.minimax(False if is_max else True,
-                                                        board_parameters, current_depth + 1,
-                                                        start_time)
-                    best_value, x, y = self.select_next_best_state((x_coordinate, y_coordinate),
-                                                                   (x, y),
-                                                                   child_result, best_value,
-                                                                   current_depth,
-                                                                   is_max)
-                    self.current_state[y_coordinate][x_coordinate] = c.EMPTY_TOKEN
+                    self.set_current_state(x_coordinate_evaluate, y_coordinate_evaluate, is_max)
+
+                    child_result = s.select_alpha_beta_child_value(alpha, beta, self,
+                                                                   (False if is_max else True,
+                                                                    board_parameters,
+                                                                    current_depth + 1, start_time),
+                                                                   (current_depth,
+                                                                    maximum_depths[0]))
+                    best_value, top_x_coordinate, top_y_coordinate = self.select_next_best_state(
+                        (x_coordinate_evaluate, y_coordinate_evaluate),
+                        (top_x_coordinate, top_y_coordinate),
+                        child_result, best_value,
+                        current_depth,
+                        is_max)
+                    self.current_state[y_coordinate_evaluate][x_coordinate_evaluate] = c.EMPTY_TOKEN
 
                     if is_max:
-                        if best_value >= beta: return best_value, x, y
+                        if best_value >= beta: return best_value, top_x_coordinate, top_y_coordinate
                         if best_value > alpha: alpha = best_value
                     else:
-                        if best_value <= alpha: return best_value, x, y
+                        if best_value <= alpha: return best_value, top_x_coordinate, top_y_coordinate
                         if best_value < beta: beta = best_value
-        return best_value, x, y
+        return best_value, top_x_coordinate, top_y_coordinate
 
     def finish_turn(self, x, y, file, board_parameters):
         go.output_move_to_game_trace(file, (x, y), "1s", self, board_parameters)

@@ -11,7 +11,7 @@ def main():
     board_parameters = m.input_mock_fast_game_settings()
 
     Game(board_parameters=board_parameters, recommend=True) \
-        .play(algo=Game.MINIMAX, player_x=Game.AI, player_o=Game.AI,
+        .play(algo=Game.ALPHABETA, player_x=Game.AI, player_o=Game.AI,
               board_parameters=board_parameters, file=gs.select_game_traces_file(board_parameters))
 
 
