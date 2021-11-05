@@ -4,6 +4,8 @@ import numpy as np
 import time
 import os
 
+from Game.heuristic_1.heuristic_random import HeuristicRandom
+
 
 def select_rows(board, board_size):
     rows = []
@@ -111,15 +113,15 @@ def select_initial_player():
 
 def select_end_game(is_end_token, x, y):
     if is_end_token == c.MIN_TOKEN:
-        return (-1, x, y)
+        return c.HEURISTIC_MAX_DEFAULT_VALUE + 1, x, y
     if is_end_token == c.MAX_TOKEN:
-        return (1, x, y)
+        return c.HEURISTIC_MIN_DEFAULT_VALUE - 1, x, y
     if is_end_token == c.EMPTY_TOKEN:
-        return (0, x, y)
+        return 0, x, y
 
 
 def select_end_game_output(game):
-    if game.result != None:
+    if game.result is not None:
         if game.result == c.MIN_TOKEN:
             return 'The winner is X!'
         if game.result == c.MAX_TOKEN:
@@ -189,7 +191,6 @@ def select_play_initial_values(game, algo, player_x, player_o):
 
 
 def select_heuristic_move(board_parameters, algo, game):
-    print("waiting for AI move")
     move = None
     if algo == game.MINIMAX:
         (_, x, y) = game.minimax(is_max=select_is_max(game), board_parameters=board_parameters,
@@ -202,11 +203,13 @@ def select_heuristic_move(board_parameters, algo, game):
     return move
 
 
-def select_is_heuristic_restriction_met(current_depth, maximum_depth, start_time,
-                                        maximum_computing_time):
-    has_exceeded_maximum_depth = current_depth >= maximum_depth
+def select_is_time_elapsed(start_time, maximum_computing_time):
     is_time_elapsed = (time.time() - start_time) >= maximum_computing_time
-    return has_exceeded_maximum_depth or is_time_elapsed
+    return is_time_elapsed
+
+
+def select_is_immediate_parent_to_max_depth_leaf(current_depth, maximum_depth):
+    return current_depth + 1 == maximum_depth
 
 
 def select_initial_statistics():
@@ -238,3 +241,19 @@ def select_human_turn_move(game, mock_inputs, board_parameters, recommended_coor
     else:
         o.output_human_turn_recommend(game.recommend, time.time(), x, y)
         return game.input_move(board_parameters=board_parameters)
+
+
+def select_child_value(game, next_minimax_params, depth_parameters):
+    next_is_max, board_parameters, next_depth, start_time = next_minimax_params
+    _, _, _, maximum_depths, maximum_computing_time = board_parameters
+    current_depth, maximum_depths = depth_parameters
+
+    if select_is_immediate_parent_to_max_depth_leaf(current_depth, maximum_depths):
+        child_value = HeuristicRandom().value
+    # elif select_is_time_elapsed(start_time, maximum_computing_time):
+    #     print("time elapsed")
+    #     child_value = HeuristicRandom().value
+    else:
+        (child_value, _, _) = game.minimax(next_is_max, board_parameters, next_depth, start_time)
+
+    return child_value

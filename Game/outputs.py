@@ -7,7 +7,7 @@ def draw_game_board(game, board_parameters):
     print()
     for y in range(board_size):
         for x in range(board_size):
-            print(F'{game.current_state[x][y]}', end="")
+            print(F'{game.current_state[y][x]}', end="")
         print()
     print()
 

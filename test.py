@@ -41,4 +41,4 @@ test_column_win()
 
 # heuristic constraints
 test_minimax_maximum_depth_reached()
-test_minimax_maximum_computing_time_reached()
+# test_minimax_maximum_computing_time_reached()
