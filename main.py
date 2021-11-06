@@ -8,7 +8,7 @@ def main():
     # board_parameters = o.input_game_settings()
 
     # Dev run:
-    board_parameters = m.input_mock_fast_game_settings()
+    board_parameters = m.input_mock_game_settings()
 
     Game(board_parameters=board_parameters, recommend=True) \
         .play(algo=Game.ALPHABETA, player_x=Game.AI, player_o=Game.AI,

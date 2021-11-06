@@ -2,9 +2,8 @@ import Game.constants as c
 import Game.outputs as o
 import numpy as np
 import time
-import os
 
-from Game.heuristic_1.heuristic_random import HeuristicRandom
+from Heuristic_1.heuristic_random import HeuristicRandom
 
 
 def select_rows(board, board_size):
@@ -249,7 +248,8 @@ def select_mini_max_child_value(game, next_minimax_params, depth_parameters):
     current_depth, maximum_depths = depth_parameters
 
     if select_is_immediate_parent_to_max_depth_leaf(current_depth, maximum_depths):
-        child_value = HeuristicRandom().value
+        child_value = HeuristicRandom(game, board_parameters).value
+        game.update_statistics_after_state_evaluation(start_time, current_depth)
     # elif select_is_time_elapsed(start_time, maximum_computing_time):
     #     print("time elapsed")
     #     child_value = HeuristicRandom().value
@@ -265,7 +265,8 @@ def select_alpha_beta_child_value(alpha, beta, game, next_minimax_params, depth_
     current_depth, maximum_depths = depth_parameters
 
     if select_is_immediate_parent_to_max_depth_leaf(current_depth, maximum_depths):
-        child_value = HeuristicRandom().value
+        child_value = HeuristicRandom(game, board_parameters).value
+        game.update_statistics_after_state_evaluation(start_time, current_depth)
     # elif select_is_time_elapsed(start_time, maximum_computing_time):
     #     print("time elapsed")
     #     child_value = HeuristicRandom().value
