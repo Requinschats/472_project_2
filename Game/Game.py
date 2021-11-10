@@ -5,7 +5,6 @@ import Game.outputs as o
 import Game.constants as c
 
 import game_traces.outputs as go
-from Game.heuristic_1.heuristic_random import HeuristicRandom
 
 
 class Game:
@@ -72,7 +71,6 @@ class Game:
     def select_next_best_state(self, current_coordinates,
                                best_coordinates, child_minimax_result, best_value, current_depth,
                                is_max):
-        state_evaluation_start_time = time.time()
         x_evaluate, y_evaluate = current_coordinates
         x_best, y_best = best_coordinates
 
@@ -80,8 +78,6 @@ class Game:
                 not is_max and child_minimax_result < best_value):
             best_value = child_minimax_result
             x_best, y_best = x_evaluate, y_evaluate
-        self.update_statistics_after_state_evaluation(state_evaluation_start_time,
-                                                      current_depth)
         return best_value, x_best, y_best
 
     def minimax(self, is_max=False, board_parameters=None, current_depth=0, start_time=None):
