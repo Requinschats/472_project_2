@@ -86,10 +86,10 @@ def select_is_board_full(game, board_parameters):
 
 
 def select_next_player(game):
-    if game.player_turn == c.MIN_TOKEN:
-        game.player_turn = c.MAX_TOKEN
-    elif game.player_turn == c.MAX_TOKEN:
-        game.player_turn = c.MIN_TOKEN
+    if game.player_turn == c.X_TOKEN:
+        game.player_turn = c.O_TOKEN
+    elif game.player_turn == c.O_TOKEN:
+        game.player_turn = c.X_TOKEN
     return game.player_turn
 
 
@@ -107,13 +107,13 @@ def select_initial_state(board_parameters):
 
 
 def select_initial_player():
-    return c.MIN_TOKEN
+    return c.X_TOKEN
 
 
 def select_end_game(is_end_token, x, y):
-    if is_end_token == c.MIN_TOKEN:
+    if is_end_token == c.X_TOKEN:
         return c.HEURISTIC_MAX_DEFAULT_VALUE + 1, x, y
-    if is_end_token == c.MAX_TOKEN:
+    if is_end_token == c.O_TOKEN:
         return c.HEURISTIC_MIN_DEFAULT_VALUE - 1, x, y
     if is_end_token == c.EMPTY_TOKEN:
         return 0, x, y
@@ -121,9 +121,9 @@ def select_end_game(is_end_token, x, y):
 
 def select_end_game_output(game):
     if game.result is not None:
-        if game.result == c.MIN_TOKEN:
+        if game.result == c.X_TOKEN:
             return 'The winner is X!'
-        if game.result == c.MAX_TOKEN:
+        if game.result == c.O_TOKEN:
             return 'The winner is O!'
         if game.result == c.EMPTY_TOKEN:
             return "It's a tie!"
@@ -171,12 +171,13 @@ def select_is_ai_turn(game, player_x, player_o):
 
 
 def select_is_human_turn(game, player_x, player_o):
-    return (game.player_turn == c.MIN_TOKEN and player_x == game.HUMAN) or (
-            game.player_turn == c.MAX_TOKEN and player_o == game.HUMAN)
+    return (game.player_turn == c.X_TOKEN and player_x == game.HUMAN) or (
+            game.player_turn == c.O_TOKEN and player_o == game.HUMAN)
 
 
 def select_is_max(game):
-    return False if game.player_turn == c.MIN_TOKEN else True
+    return True
+    # return False if game.player_turn == c.X_TOKEN else True
 
 
 def select_play_initial_values(game, algo, player_x, player_o):
@@ -192,11 +193,11 @@ def select_play_initial_values(game, algo, player_x, player_o):
 def select_heuristic_move(board_parameters, algo, game):
     move = None
     if algo == game.MINIMAX:
-        (_, x, y) = game.minimax(is_max=select_is_max(game), board_parameters=board_parameters,
+        (_, x, y) = game.minimax(is_max=True, board_parameters=board_parameters,
                                  start_time=time.time())
         move = (_, x, y)
     elif algo == game.ALPHABETA:
-        (m, x, y) = game.alphabeta(is_max=select_is_max(game), board_parameters=board_parameters,
+        (m, x, y) = game.alphabeta(is_max=True, board_parameters=board_parameters,
                                    start_time=time.time())
         move = (m, x, y)
     return move
@@ -275,3 +276,17 @@ def select_alpha_beta_child_value(alpha, beta, game, next_minimax_params, depth_
                                              start_time)
 
     return child_value
+
+
+def select_max_min_tokens_from_player_turn(player_turn):
+    if player_turn == c.X_TOKEN:
+        return c.X_TOKEN, c.O_TOKEN
+    else:
+        return c.O_TOKEN, c.X_TOKEN
+
+
+def select_opposite_player(player_token):
+    if player_token == c.X_TOKEN:
+        return c.O_TOKEN
+    if player_token == c.O_TOKEN:
+        return c.X_TOKEN

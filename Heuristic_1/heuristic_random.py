@@ -1,6 +1,7 @@
 import time
 
 import Heuristic_1.selectors as s
+import Game.selectors as gs
 
 
 class HeuristicRandom:
@@ -14,10 +15,14 @@ class HeuristicRandom:
         return time.time() - self.start_time
 
     def evaluate_state(self, game, board_parameters):
-        if s.select_min_has_winning_move(game, board_parameters):
+        # print(game.)
+        # if s.select_player_has_winning_move(game, board_parameters, game.player_turn):
+        #     return self.RANGE[1]
+        if s.select_player_has_winning_move(game, board_parameters,
+                                            gs.select_opposite_player(game.player_turn)):
             return self.RANGE[0]
 
         max_center_score = s.select_min_max_center_score_differential(game, board_parameters)
         max_connected_group_score = s.select_connect_groups_score_differential(game,
                                                                                board_parameters)
-        return 10 * max_center_score + 10 * max_connected_group_score
+        return max_center_score + max_connected_group_score
