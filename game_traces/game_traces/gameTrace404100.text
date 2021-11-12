@@ -1,0 +1,214 @@
+Board size: 4
+Blocks: []
+Winning line size: 4
+Maximum depths: (2, 2)
+Maximum computing time: 100
+Player x: AI
+Player 0: AI
+Algorithm: MINIMAX
+
+Initial board configuration 
+....
+....
+....
+....
+
+
+Move coordinates: C1
+i   Evaluation time: 0.01842784881591797
+ii  Heuristic evaluations: 0
+iii Evaluations by depth: 
+iv  Average evaluation depth: 
+v   Average recursion depth: 
+....
+..X.
+....
+....
+
+
+Move coordinates: B2
+i   Evaluation time: 0.031738996505737305
+ii  Heuristic evaluations: 1
+iii Evaluations by depth: 
+iv  Average evaluation depth: 
+v   Average recursion depth: 
+....
+..X.
+.O..
+....
+
+
+Move coordinates: C2
+i   Evaluation time: 0.04868888854980469
+ii  Heuristic evaluations: 2
+iii Evaluations by depth: 
+iv  Average evaluation depth: 
+v   Average recursion depth: 
+....
+..X.
+.OX.
+....
+
+
+Move coordinates: C3
+i   Evaluation time: 0.059781789779663086
+ii  Heuristic evaluations: 3
+iii Evaluations by depth: 
+iv  Average evaluation depth: 
+v   Average recursion depth: 
+....
+..X.
+.OX.
+..O.
+
+
+Move coordinates: D2
+i   Evaluation time: 0.0734398365020752
+ii  Heuristic evaluations: 4
+iii Evaluations by depth: 
+iv  Average evaluation depth: 
+v   Average recursion depth: 
+....
+..X.
+.OXX
+..O.
+
+
+Move coordinates: B3
+i   Evaluation time: 0.09010601043701172
+ii  Heuristic evaluations: 5
+iii Evaluations by depth: 
+iv  Average evaluation depth: 
+v   Average recursion depth: 
+....
+..X.
+.OXX
+.OO.
+
+
+Move coordinates: A0
+i   Evaluation time: 0.10162591934204102
+ii  Heuristic evaluations: 6
+iii Evaluations by depth: 
+iv  Average evaluation depth: 
+v   Average recursion depth: 
+X...
+..X.
+.OXX
+.OO.
+
+
+Move coordinates: D3
+i   Evaluation time: 0.1099388599395752
+ii  Heuristic evaluations: 7
+iii Evaluations by depth: 
+iv  Average evaluation depth: 
+v   Average recursion depth: 
+X...
+..X.
+.OXX
+.OOO
+
+
+Move coordinates: A3
+i   Evaluation time: 0.12209391593933105
+ii  Heuristic evaluations: 8
+iii Evaluations by depth: 
+iv  Average evaluation depth: 
+v   Average recursion depth: 
+X...
+..X.
+.OXX
+XOOO
+
+
+Move coordinates: A2
+i   Evaluation time: 0.1328577995300293
+ii  Heuristic evaluations: 9
+iii Evaluations by depth: 
+iv  Average evaluation depth: 
+v   Average recursion depth: 
+X...
+..X.
+OOXX
+XOOO
+
+
+Move coordinates: B1
+i   Evaluation time: 0.14107394218444824
+ii  Heuristic evaluations: 10
+iii Evaluations by depth: 
+iv  Average evaluation depth: 
+v   Average recursion depth: 
+X...
+.XX.
+OOXX
+XOOO
+
+
+Move coordinates: A1
+i   Evaluation time: 0.1516118049621582
+ii  Heuristic evaluations: 11
+iii Evaluations by depth: 
+iv  Average evaluation depth: 
+v   Average recursion depth: 
+X...
+OXX.
+OOXX
+XOOO
+
+
+Move coordinates: B0
+i   Evaluation time: 0.17100882530212402
+ii  Heuristic evaluations: 12
+iii Evaluations by depth: 
+iv  Average evaluation depth: 
+v   Average recursion depth: 
+XX..
+OXX.
+OOXX
+XOOO
+
+
+Move coordinates: C0
+i   Evaluation time: 0.1787559986114502
+ii  Heuristic evaluations: 13
+iii Evaluations by depth: 
+iv  Average evaluation depth: 
+v   Average recursion depth: 
+XXO.
+OXX.
+OOXX
+XOOO
+
+
+Move coordinates: D1
+i   Evaluation time: 0.1932978630065918
+ii  Heuristic evaluations: 14
+iii Evaluations by depth: 
+iv  Average evaluation depth: 
+v   Average recursion depth: 
+XXO.
+OXXX
+OOXX
+XOOO
+
+
+Move coordinates: D0
+i   Evaluation time: 0.20410680770874023
+ii  Heuristic evaluations: 15
+iii Evaluations by depth: 
+iv  Average evaluation depth: 
+v   Average recursion depth: 
+XXOO
+OXXX
+OOXX
+XOOO
+
+
+Winner: Tie
+Average evaluation time: 0.5632194277118234
+Total heuristic evaluations: 1345
+Evaluations by depth: Depth: 1, state count: 1360 
+Average of per-move average depth: 0
+Total moves: 16

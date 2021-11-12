@@ -24,10 +24,10 @@ def draw_game_board(game, board_parameters):
     print()
 
 
-def input_coordonates(game):
+def input_coordinates(game):
     print(F'Player {game.player_turn}, enter your move:')
-    px = int(input('enter the x coordinate: '))
-    py = int(input('enter the y coordinate: '))
+    px = s.select_coordinate_input_value(input('enter the x coordinate: '))
+    py = s.select_coordinate_input_value(input('enter the y coordinate: '))
     return px, py
 
 

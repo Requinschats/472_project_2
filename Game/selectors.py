@@ -215,7 +215,7 @@ def select_is_immediate_parent_to_max_depth_leaf(current_depth, maximum_depth):
 def select_initial_statistics():
     return {
         "evaluation_times": [],
-        "states_evaluated": 0,
+        "states_evaluated": {},
         "average_move_depths": [],
         "state_count_per_depth": {},
         "move_count": 0
@@ -266,7 +266,7 @@ def select_alpha_beta_child_value(alpha, beta, game, next_minimax_params, depth_
     current_depth, maximum_depths = depth_parameters
 
     if select_is_immediate_parent_to_max_depth_leaf(current_depth, maximum_depths):
-        child_value = HeuristicOne(game, board_parameters).value
+        child_value = Heuristic(game, board_parameters).value
         game.update_statistics_after_state_evaluation(start_time, current_depth)
     # elif select_is_time_elapsed(start_time, maximum_computing_time):
     #     print("time elapsed")
@@ -290,3 +290,12 @@ def select_opposite_player(player_token):
         return c.O_TOKEN
     if player_token == c.O_TOKEN:
         return c.X_TOKEN
+
+
+def select_char_input_matching_number(char):
+    return ord(char) - 97
+
+
+def select_coordinate_input_value(coordinate_input):
+    if coordinate_input.isalpha(): return select_char_input_matching_number(coordinate_input)
+    return int(coordinate_input)
