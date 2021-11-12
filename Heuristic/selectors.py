@@ -26,6 +26,17 @@ def select_player_has_winning_move(game, board_parameters, player_token):
     return False
 
 
+def select_player_is_winning(game, board_parameters, player_token):
+    board_size, _, winning_line_size, _, _ = board_parameters
+    columns = s.select_columns(game.current_state, board_size)
+    rows = s.select_rows(game.current_state, board_size)
+    diagonals = s.select_board_diagonals(game.current_state)
+    if select_is_player_token_winning_line([columns, rows, diagonals], winning_line_size,
+                                           player_token):
+        return True
+    return False
+
+
 def select_distance_between_coordinates(p1, p2):
     distance = np.linalg.norm(np.array(p1) - np.array(p2))
     return distance

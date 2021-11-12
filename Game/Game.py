@@ -84,10 +84,6 @@ class Game:
         best_value = c.HEURISTIC_MIN_DEFAULT_VALUE if not is_max else c.HEURISTIC_MAX_DEFAULT_VALUE
         top_x_coordinate, top_y_coordinate = None, None
 
-        end_game = s.select_end_game(s.select_is_end_token(self, board_parameters),
-                                     top_x_coordinate, top_y_coordinate)
-        if end_game: return end_game
-
         for y_coordinate_evaluate in range(board_size):
             for x_coordinate_evaluate in range(board_size):
                 if s.select_is_empty_position(
@@ -95,12 +91,12 @@ class Game:
                     self.set_current_state(x_coordinate_evaluate, y_coordinate_evaluate,
                                            self.player_turn if is_max else s.select_opposite_player(
                                                self.player_turn))
-
                     child_value = s.select_mini_max_child_value(self,
                                                                 (False if is_max else True,
                                                                  board_parameters,
                                                                  current_depth + 1, start_time),
                                                                 (current_depth, maximum_depths[0]))
+
                     best_value, top_x_coordinate, top_y_coordinate = self.select_next_best_state(
                         (x_coordinate_evaluate, y_coordinate_evaluate),
                         (top_x_coordinate, top_y_coordinate),
@@ -114,10 +110,6 @@ class Game:
         board_size, blocks, winning_line_size, maximum_depths, maximum_computing_time = board_parameters
         best_value = c.HEURISTIC_MIN_DEFAULT_VALUE if not is_max else c.HEURISTIC_MAX_DEFAULT_VALUE
         top_x_coordinate, top_y_coordinate = None, None
-
-        end_game = s.select_end_game(s.select_is_end_token(self, board_parameters),
-                                     top_x_coordinate, top_y_coordinate)
-        if end_game: return end_game
 
         for y_coordinate_evaluate in range(board_size):
             for x_coordinate_evaluate in range(board_size):

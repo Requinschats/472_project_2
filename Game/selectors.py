@@ -3,7 +3,7 @@ import Game.outputs as o
 import numpy as np
 import time
 
-from Heuristic_1.heuristic_random import HeuristicRandom
+from Heuristic.heuristic import Heuristic
 
 
 def select_rows(board, board_size):
@@ -110,13 +110,13 @@ def select_initial_player():
     return c.X_TOKEN
 
 
-def select_end_game(is_end_token, x, y):
-    if is_end_token == c.X_TOKEN:
-        return c.HEURISTIC_MAX_DEFAULT_VALUE + 1, x, y
-    if is_end_token == c.O_TOKEN:
-        return c.HEURISTIC_MIN_DEFAULT_VALUE - 1, x, y
-    if is_end_token == c.EMPTY_TOKEN:
-        return 0, x, y
+# def select_end_game(is_end_token, x, y):
+#     if is_end_token == c.X_TOKEN:
+#         return c.HEURISTIC_MAX_DEFAULT_VALUE + 1, x, y
+#     if is_end_token == c.O_TOKEN:
+#         return c.HEURISTIC_MIN_DEFAULT_VALUE - 1, x, y
+#     if is_end_token == c.EMPTY_TOKEN:
+#         return 0, x, y
 
 
 def select_end_game_output(game):
@@ -154,7 +154,7 @@ def select_is_valid_move(game, px, py, board_parameters):
     if is_outside_board:
         return False
 
-    is_non_empty_space = game.current_state[px][py] != c.EMPTY_TOKEN
+    is_non_empty_space = game.current_state[py][px] != c.EMPTY_TOKEN
     if is_non_empty_space:
         return False
 
@@ -249,7 +249,7 @@ def select_mini_max_child_value(game, next_minimax_params, depth_parameters):
     current_depth, maximum_depths = depth_parameters
 
     if select_is_immediate_parent_to_max_depth_leaf(current_depth, maximum_depths):
-        child_value = HeuristicRandom(game, board_parameters).value
+        child_value = Heuristic(game, board_parameters).value
         game.update_statistics_after_state_evaluation(start_time, current_depth)
     # elif select_is_time_elapsed(start_time, maximum_computing_time):
     #     print("time elapsed")
@@ -266,7 +266,7 @@ def select_alpha_beta_child_value(alpha, beta, game, next_minimax_params, depth_
     current_depth, maximum_depths = depth_parameters
 
     if select_is_immediate_parent_to_max_depth_leaf(current_depth, maximum_depths):
-        child_value = HeuristicRandom(game, board_parameters).value
+        child_value = HeuristicOne(game, board_parameters).value
         game.update_statistics_after_state_evaluation(start_time, current_depth)
     # elif select_is_time_elapsed(start_time, maximum_computing_time):
     #     print("time elapsed")
