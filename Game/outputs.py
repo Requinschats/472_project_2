@@ -2,10 +2,22 @@ import time
 import Game.selectors as s
 
 
+def output_x_board_letters(board_size):
+    print("  ", end="")
+    for letter in range(97, 97 + board_size):
+        print(chr(letter).upper(), end="")
+    print()
+    print("  ", end="")
+    for letter in range(97, 97 + board_size):
+        print("-", end="")
+
+
 def draw_game_board(game, board_parameters):
     board_size, blocks, winning_line_size, maximum_depths, maximum_computing_time = board_parameters
+    output_x_board_letters(board_size)
     print()
     for y in range(board_size):
+        print(F'{y}|', end="")
         for x in range(board_size):
             print(F'{game.current_state[y][x]}', end="")
         print()

@@ -31,7 +31,7 @@ def select_player_text_from_token(player):
 def select_player_from_token(token):
     if token == gc.EMPTY_TOKEN:
         return "Tie"
-    if token == gc.MAX_TOKEN:
-        return "Max"
-    if token == gc.MIN_TOKEN:
-        return "Min"
+    if token == gc.O_TOKEN:
+        return "X"
+    if token == gc.O_TOKEN:
+        return "O"

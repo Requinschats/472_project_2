@@ -64,9 +64,8 @@ class Game:
         self.add_evaluation_time(start_time=state_evaluation_start_time)
         self.increment_depth_state_count(depth=current_depth)
 
-    def set_current_state(self, x_coordinate, y_coordinate, is_max):
-        self.current_state[y_coordinate][
-            x_coordinate] = c.MAX_TOKEN if is_max else c.MIN_TOKEN
+    def set_current_state(self, x_coordinate, y_coordinate, player_turn):
+        self.current_state[y_coordinate][x_coordinate] = player_turn
 
     def select_next_best_state(self, current_coordinates,
                                best_coordinates, child_minimax_result, best_value, current_depth,
@@ -85,21 +84,19 @@ class Game:
         best_value = c.HEURISTIC_MIN_DEFAULT_VALUE if not is_max else c.HEURISTIC_MAX_DEFAULT_VALUE
         top_x_coordinate, top_y_coordinate = None, None
 
-        end_game = s.select_end_game(s.select_is_end_token(self, board_parameters),
-                                     top_x_coordinate, top_y_coordinate)
-        if end_game: return end_game
-
         for y_coordinate_evaluate in range(board_size):
             for x_coordinate_evaluate in range(board_size):
                 if s.select_is_empty_position(
                         self.current_state[y_coordinate_evaluate][x_coordinate_evaluate]):
-                    self.set_current_state(x_coordinate_evaluate, y_coordinate_evaluate, is_max)
-
+                    self.set_current_state(x_coordinate_evaluate, y_coordinate_evaluate,
+                                           self.player_turn if is_max else s.select_opposite_player(
+                                               self.player_turn))
                     child_value = s.select_mini_max_child_value(self,
                                                                 (False if is_max else True,
                                                                  board_parameters,
                                                                  current_depth + 1, start_time),
                                                                 (current_depth, maximum_depths[0]))
+
                     best_value, top_x_coordinate, top_y_coordinate = self.select_next_best_state(
                         (x_coordinate_evaluate, y_coordinate_evaluate),
                         (top_x_coordinate, top_y_coordinate),
@@ -114,16 +111,14 @@ class Game:
         best_value = c.HEURISTIC_MIN_DEFAULT_VALUE if not is_max else c.HEURISTIC_MAX_DEFAULT_VALUE
         top_x_coordinate, top_y_coordinate = None, None
 
-        end_game = s.select_end_game(s.select_is_end_token(self, board_parameters),
-                                     top_x_coordinate, top_y_coordinate)
-        if end_game: return end_game
-
         for y_coordinate_evaluate in range(board_size):
             for x_coordinate_evaluate in range(board_size):
                 current_position = self.current_state[y_coordinate_evaluate][x_coordinate_evaluate]
                 is_empty = s.select_is_empty_position(current_position)
                 if is_empty:
-                    self.set_current_state(x_coordinate_evaluate, y_coordinate_evaluate, is_max)
+                    self.set_current_state(x_coordinate_evaluate, y_coordinate_evaluate,
+                                           self.player_turn if is_max else s.select_opposite_player(
+                                               self.player_turn))
 
                     child_result = s.select_alpha_beta_child_value(alpha, beta, self,
                                                                    (False if is_max else True,
