@@ -2,10 +2,7 @@ import game_traces.selectors as s
 import Game.selectors as gs
 
 
-def output_game_trace_initial_values(file, board_parameters, game_parameters, game):
-    if not file:
-        return
-
+def output_game_parameters(file, board_parameters, game_parameters):
     board_size, blocks, winning_line_size, maximum_depths, maximum_computing_time = board_parameters
     player_x, player_o, algo = game_parameters
     file.write("Board size: " + str(board_size))
@@ -16,6 +13,13 @@ def output_game_trace_initial_values(file, board_parameters, game_parameters, ga
     file.write("\nPlayer x: " + str(s.select_player_text_from_token(player_x)))
     file.write("\nPlayer 0: " + str(s.select_player_text_from_token(player_o)))
     file.write("\nAlgorithm: " + str(s.select_algo_name_from_token(algo)))
+
+
+def output_game_trace_initial_values(file, board_parameters, game_parameters, game):
+    if not file:
+        return
+
+    output_game_parameters(file, board_parameters, game_parameters)
 
     file.write("\n\nInitial board configuration \n")
     output_game_trace_board(file, game, board_parameters)

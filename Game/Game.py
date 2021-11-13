@@ -21,7 +21,7 @@ class Game:
     def initialize_game(self, board_parameters):
         self.current_state = s.select_initial_state(board_parameters)
         self.player_turn = s.select_initial_player()
-        self.statistics = s.select_initial_statistics()
+        # self.statistics = s.select_initial_statistics()
 
     def is_valid_move(self, px, py, board_parameters):
         return s.select_is_valid_move(self, px, py, board_parameters)
@@ -174,7 +174,8 @@ class Game:
         while True:
             if not mock_inputs: o.draw_game_board(self, board_parameters)
 
-            if self.handle_end_game(file, board_parameters): return
+            game_result = self.handle_end_game(file, board_parameters)
+            if game_result: return self.statistics, game_result
 
             if s.select_is_human_turn(self, player_x, player_o):
                 (x, y) = s.select_human_turn_move(self, mock_inputs, board_parameters, (x, y))
