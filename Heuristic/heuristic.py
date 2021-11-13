@@ -57,7 +57,8 @@ class Heuristic:
         max_center_score = s.select_min_max_center_score_differential(game, board_parameters)
         max_connected_group_score = s.select_connect_groups_score_differential(game,
                                                                                board_parameters)
-        return max_center_score * 10 + max_connected_group_score * 5
+
+        return max_center_score * 15 + max_connected_group_score
 
     def evaluate_state_h2(self, game, board_parameters):
         winning_state = self.select_is_winning_state(game, board_parameters)
@@ -65,7 +66,7 @@ class Heuristic:
 
         winning_move = self.select_is_winning_move(game, board_parameters)
         if winning_move: return winning_move
-        
+
         cardinality_differential = s.select_max_move_cardinalities_differential(game,
                                                                                 board_parameters)
         return cardinality_differential

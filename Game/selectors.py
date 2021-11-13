@@ -217,10 +217,11 @@ def select_is_second_to_last_move(game_board, board_size):
     return False
 
 
-def select_is_immediate_parent_to_max_depth_leaf(current_depth, maximum_depth, game_board,
+def select_is_immediate_parent_to_max_depth_leaf(depth_parameters, game_board,
                                                  board_size):
-    return current_depth + 1 == maximum_depth or select_is_second_to_last_move(game_board,
-                                                                               board_size)
+    current_depth, maximum_depths = depth_parameters
+    return current_depth + 1 == maximum_depths or select_is_second_to_last_move(game_board,
+                                                                                board_size)
 
 
 def select_initial_statistics():
@@ -254,13 +255,28 @@ def select_human_turn_move(game, mock_inputs, board_parameters, recommended_coor
         return game.input_move(board_parameters=board_parameters)
 
 
+def select_is_near_maximum_computing_time(start_time, computing_time):
+    time_elapsed = time.time() - start_time
+    return time_elapsed / computing_time >= 0.75 or computing_time - time_elapsed <= 0.75
+
+
+def select_should_evaluate_state(depth_parameters, game, board_size, start_time,
+                                 maximum_computing_time):
+    is_immediate_parent_to_leaf = select_is_immediate_parent_to_max_depth_leaf(depth_parameters,
+                                                                               game.current_state,
+                                                                               board_size)
+    is_near_max_computing_time = select_is_near_maximum_computing_time(start_time,
+                                                                       maximum_computing_time)
+    return is_immediate_parent_to_leaf or is_near_max_computing_time
+
+
 def select_mini_max_child_value(game, next_minimax_params, depth_parameters):
     next_is_max, board_parameters, next_depth, start_time = next_minimax_params
     board_size, _, _, maximum_depths, maximum_computing_time = board_parameters
     current_depth, maximum_depths = depth_parameters
 
-    if select_is_immediate_parent_to_max_depth_leaf(current_depth, maximum_depths,
-                                                    game.current_state, board_size):
+    if select_should_evaluate_state(depth_parameters, game, board_size, start_time,
+                                    maximum_computing_time):
         child_value = Heuristic(game, board_parameters).value
         game.update_statistics_after_state_evaluation(start_time, current_depth)
     else:
@@ -273,8 +289,8 @@ def select_alpha_beta_child_value(alpha, beta, game, next_minimax_params, depth_
     board_size, _, _, maximum_depths, maximum_computing_time = board_parameters
     current_depth, maximum_depths = depth_parameters
 
-    if select_is_immediate_parent_to_max_depth_leaf(current_depth, maximum_depths,
-                                                    game.current_state, board_size):
+    if select_should_evaluate_state(depth_parameters, game, board_size, start_time,
+                                    maximum_computing_time):
         child_value = Heuristic(game, board_parameters).value
         game.update_statistics_after_state_evaluation(start_time, current_depth)
     else:

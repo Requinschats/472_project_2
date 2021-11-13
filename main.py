@@ -6,15 +6,16 @@ from scoreboard.outputs import output_scoreboard
 
 
 def main():
-    # Real run:
+    # Human inputs run:
     # board_parameters = o.input_game_settings()
-    # Dev run:
+
+    # Mock inputs run:
     board_parameters = m.input_mock_game_settings()
 
     round_count = 1
     game_statistics = []
     game_results = []
-    game_parameters = player_x, player_o, algo = Game.AI, Game.AI, Game.MINIMAX
+    game_parameters = player_x, player_o, algo = Game.AI, Game.AI, Game.ALPHABETA
     heuristics = Heuristic.HEURISTIC_1_ID, Heuristic.HEURISTIC_2_ID
 
     for game_index in range(2 * round_count):

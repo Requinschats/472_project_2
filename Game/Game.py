@@ -92,6 +92,9 @@ class Game:
             x_best, y_best = x_evaluate, y_evaluate
         return best_value, x_best, y_best
 
+    def select_maximum_depth(self, maximum_depths):
+        return maximum_depths[0] if self.player_turn == c.X_TOKEN else maximum_depths[1]
+
     def minimax(self, is_max=False, board_parameters=None, current_depth=0, start_time=None):
         board_size, blocks, winning_line_size, maximum_depths, maximum_computing_time = board_parameters
         best_value = c.HEURISTIC_MIN_DEFAULT_VALUE if not is_max else c.HEURISTIC_MAX_DEFAULT_VALUE
@@ -104,11 +107,13 @@ class Game:
                     self.set_current_state(x_coordinate_evaluate, y_coordinate_evaluate,
                                            self.player_turn if is_max else s.select_opposite_player(
                                                self.player_turn))
+
+                    maximum_depth = self.select_maximum_depth(maximum_depths)
                     child_value = s.select_mini_max_child_value(self,
                                                                 (False if is_max else True,
                                                                  board_parameters,
                                                                  current_depth + 1, start_time),
-                                                                (current_depth, maximum_depths[0]))
+                                                                (current_depth, maximum_depth))
                     best_value, top_x_coordinate, top_y_coordinate = self.select_next_best_state(
                         (x_coordinate_evaluate, y_coordinate_evaluate),
                         (top_x_coordinate, top_y_coordinate),
@@ -131,13 +136,13 @@ class Game:
                     self.set_current_state(x_coordinate_evaluate, y_coordinate_evaluate,
                                            self.player_turn if is_max else s.select_opposite_player(
                                                self.player_turn))
-
+                    maximum_depth = self.select_maximum_depth(maximum_depths)
                     child_result = s.select_alpha_beta_child_value(alpha, beta, self,
                                                                    (False if is_max else True,
                                                                     board_parameters,
                                                                     current_depth + 1, start_time),
                                                                    (current_depth,
-                                                                    maximum_depths[0]))
+                                                                    maximum_depth))
                     best_value, top_x_coordinate, top_y_coordinate = self.select_next_best_state(
                         (x_coordinate_evaluate, y_coordinate_evaluate),
                         (top_x_coordinate, top_y_coordinate),
