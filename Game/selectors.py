@@ -208,8 +208,19 @@ def select_is_time_elapsed(start_time, maximum_computing_time):
     return is_time_elapsed
 
 
-def select_is_immediate_parent_to_max_depth_leaf(current_depth, maximum_depth):
-    return current_depth + 1 == maximum_depth
+def select_is_second_to_last_move(game_board, board_size):
+    empty_move_count = 0
+    for y in range(board_size):
+        for x in range(board_size):
+            if game_board[y][x] == c.EMPTY_TOKEN: empty_move_count += 1
+    if empty_move_count == 1: return True
+    return False
+
+
+def select_is_immediate_parent_to_max_depth_leaf(current_depth, maximum_depth, game_board,
+                                                 board_size):
+    return current_depth + 1 == maximum_depth or select_is_second_to_last_move(game_board,
+                                                                               board_size)
 
 
 def select_initial_statistics():
@@ -245,36 +256,30 @@ def select_human_turn_move(game, mock_inputs, board_parameters, recommended_coor
 
 def select_mini_max_child_value(game, next_minimax_params, depth_parameters):
     next_is_max, board_parameters, next_depth, start_time = next_minimax_params
-    _, _, _, maximum_depths, maximum_computing_time = board_parameters
+    board_size, _, _, maximum_depths, maximum_computing_time = board_parameters
     current_depth, maximum_depths = depth_parameters
 
-    if select_is_immediate_parent_to_max_depth_leaf(current_depth, maximum_depths):
+    if select_is_immediate_parent_to_max_depth_leaf(current_depth, maximum_depths,
+                                                    game.current_state, board_size):
         child_value = Heuristic(game, board_parameters).value
         game.update_statistics_after_state_evaluation(start_time, current_depth)
-    # elif select_is_time_elapsed(start_time, maximum_computing_time):
-    #     print("time elapsed")
-    #     child_value = HeuristicRandom().value
     else:
         (child_value, _, _) = game.minimax(next_is_max, board_parameters, next_depth, start_time)
-
     return child_value
 
 
 def select_alpha_beta_child_value(alpha, beta, game, next_minimax_params, depth_parameters):
     next_is_max, board_parameters, next_depth, start_time = next_minimax_params
-    _, _, _, maximum_depths, maximum_computing_time = board_parameters
+    board_size, _, _, maximum_depths, maximum_computing_time = board_parameters
     current_depth, maximum_depths = depth_parameters
 
-    if select_is_immediate_parent_to_max_depth_leaf(current_depth, maximum_depths):
+    if select_is_immediate_parent_to_max_depth_leaf(current_depth, maximum_depths,
+                                                    game.current_state, board_size):
         child_value = Heuristic(game, board_parameters).value
         game.update_statistics_after_state_evaluation(start_time, current_depth)
-    # elif select_is_time_elapsed(start_time, maximum_computing_time):
-    #     print("time elapsed")
-    #     child_value = HeuristicRandom().value
     else:
         (child_value, _, _) = game.alphabeta(alpha, beta, next_is_max, board_parameters, next_depth,
                                              start_time)
-
     return child_value
 
 

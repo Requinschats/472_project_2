@@ -1,4 +1,5 @@
 import time
+from random import randrange
 
 import Heuristic.selectors as s
 import Game.selectors as gs
@@ -10,14 +11,20 @@ class Heuristic:
     LOOSING_LINE_SCORE = RANGE[0] + 1
     WINNING_MOVE_SCORE = RANGE[1] - 10
     LOOSING_MOVE_SCORE = RANGE[0] + 10
+    HEURISTIC_1_ID = 1
+    HEURISTIC_2_ID = 2
+    HEURISTIC_ID_RANDOM = 3
 
-    def __init__(self, game, board_parameters, heuristic_id=1):
+    def __init__(self, game, board_parameters):
+        heuristic_id = s.select_player_heuristic_id_from_player_turn(game)
         heuristic_evaluation_function = self.select_heuristic_function_from_id(heuristic_id)
         self.start_time = time.time()
         self.value = heuristic_evaluation_function(game, board_parameters)
 
     def select_heuristic_function_from_id(self, heuristic_id=1):
-        if heuristic_id == 2:
+        if heuristic_id == self.HEURISTIC_ID_RANDOM:
+            return self.evaluate_state_random
+        if heuristic_id == self.HEURISTIC_2_ID:
             return self.evaluate_state_h2
         return self.evaluate_state_h1
 
@@ -54,3 +61,6 @@ class Heuristic:
 
     def evaluate_state_h2(self, game, board_parameters):
         return 0
+
+    def evaluate_state_random(self, game, board_parameters):
+        return randrange(10)

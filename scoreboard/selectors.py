@@ -39,12 +39,11 @@ def select_output_scoreboard_statistics(game_statistics):
     evaluations_by_depth = []
     evaluation_depths = []
     move_per_games = []
-
     for game_stat in game_statistics:
         evaluation_times.append(select_list_average(game_stat["evaluation_times"]))
         heuristic_evaluation_counts.append(sum(game_stat["states_evaluated"].values()))
         evaluations_by_depth.append(game_stat["state_count_per_depth"])
-        evaluation_depths.append(select_list_average(game_stat["average_move_depths"]))
+        evaluation_depths.append(game_stat["average_move_depths"])
         move_per_games.append(game_stat["move_count"])
 
     average_evaluation_time = select_list_average(evaluation_times)
