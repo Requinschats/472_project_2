@@ -54,9 +54,8 @@ def output_game_trace_statistics(file, statistics):
         "\nTotal heuristic evaluations: " + str(sum(statistics["states_evaluated"].values())))
 
     output_state_count_per_depth(file, statistics["state_count_per_depth"])
-
-    average_per_move_average_depth = gs.select_list_average(statistics["average_move_depths"])
-    file.write("\nAverage of per-move average depth: " + str(average_per_move_average_depth))
+    
+    file.write("\nAverage of per-move average depth: " + str(statistics["average_move_depths"]))
 
     file.write("\nTotal moves: " + str(statistics["move_count"]))
 

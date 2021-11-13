@@ -10,18 +10,17 @@ import game_traces.outputs as go
 class Game:
     MINIMAX, ALPHABETA = 0, 1
     HUMAN, AI = 2, 3
-
     statistics = {}
 
-    def __init__(self, board_parameters, recommend=True):
+    def __init__(self, board_parameters, recommend=True, heuristics=None):
         self.initialize_game(board_parameters)
         self.recommend = recommend
         self.statistics = s.select_initial_statistics()
+        self.heuristics = heuristics
 
     def initialize_game(self, board_parameters):
         self.current_state = s.select_initial_state(board_parameters)
         self.player_turn = s.select_initial_player()
-        # self.statistics = s.select_initial_statistics()
 
     def is_valid_move(self, px, py, board_parameters):
         return s.select_is_valid_move(self, px, py, board_parameters)
@@ -65,10 +64,18 @@ class Game:
     def increment_move_count(self):
         self.statistics["move_count"] += 1
 
+    def add_depth_state_evaluation(self, depth):
+        self.statistics["average_move_depths"].append(depth)
+
+    def average_move_depths(self):
+        self.statistics["average_move_depths"] = s.select_list_average(
+            self.statistics["average_move_depths"])
+
     def update_statistics_after_state_evaluation(self, state_evaluation_start_time, current_depth):
         self.increment_states_count()
         self.add_evaluation_time(start_time=state_evaluation_start_time)
         self.increment_depth_state_count(depth=current_depth)
+        self.add_depth_state_evaluation(current_depth)
 
     def set_current_state(self, x_coordinate, y_coordinate, player_turn):
         self.current_state[y_coordinate][x_coordinate] = player_turn
@@ -102,7 +109,6 @@ class Game:
                                                                  board_parameters,
                                                                  current_depth + 1, start_time),
                                                                 (current_depth, maximum_depths[0]))
-
                     best_value, top_x_coordinate, top_y_coordinate = self.select_next_best_state(
                         (x_coordinate_evaluate, y_coordinate_evaluate),
                         (top_x_coordinate, top_y_coordinate),
@@ -158,6 +164,7 @@ class Game:
     def handle_end_game(self, file, board_parameters):
         game_result = self.check_end(board_parameters=board_parameters)
         if game_result:
+            self.average_move_depths()
             go.output_game_trace_end(file, game_result, self.statistics)
             if self.result is not None:
                 self.initialize_game(board_parameters)

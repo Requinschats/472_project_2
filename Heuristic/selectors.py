@@ -1,6 +1,7 @@
 import numpy as np
 
 import Game.selectors as s
+import Game.constants as c
 
 
 def select_is_player_token_winning_line(list_of_winning_lines, winning_line_size, player_token):
@@ -102,3 +103,11 @@ def select_connect_groups_score_differential(game, board_parameters):
                 max_connected_group_score += select_surrounding_moves_from_position_score(
                     game.current_state, (x, y))
     return max_connected_group_score - min_connected_group_score
+
+
+def select_player_heuristic_id_from_player_turn(game):
+    player_turn = game.player_turn
+    if player_turn == c.X_TOKEN:
+        return game.heuristics[0]
+    else:
+        return game.heuristics[1]
