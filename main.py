@@ -15,7 +15,7 @@ def main():
     game_statistics = []
     game_results = []
     game_parameters = player_x, player_o, algo = Game.AI, Game.AI, Game.MINIMAX
-    heuristics = Heuristic.HEURISTIC_1_ID, Heuristic.HEURISTIC_ID_RANDOM
+    heuristics = Heuristic.HEURISTIC_1_ID, Heuristic.HEURISTIC_2_ID
 
     for game_index in range(2 * round_count):
         statistics, game_result = Game(board_parameters=board_parameters,

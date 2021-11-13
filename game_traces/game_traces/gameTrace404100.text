@@ -15,7 +15,7 @@ Initial board configuration
 
 
 Move coordinates: C1
-i   Evaluation time: 0.0055849552154541016
+i   Evaluation time: 0.0056040287017822266
 ii  Heuristic evaluations: 0
 iii Evaluations by depth: 
 iv  Average evaluation depth: 
@@ -26,188 +26,188 @@ v   Average recursion depth:
 ....
 
 
-Move coordinates: D1
-i   Evaluation time: 0.013242959976196289
+Move coordinates: B1
+i   Evaluation time: 0.020133018493652344
 ii  Heuristic evaluations: 1
 iii Evaluations by depth: 
 iv  Average evaluation depth: 
 v   Average recursion depth: 
 ....
-..XO
+.OX.
 ....
 ....
 
 
 Move coordinates: B2
-i   Evaluation time: 0.018056154251098633
+i   Evaluation time: 0.025426149368286133
 ii  Heuristic evaluations: 2
 iii Evaluations by depth: 
 iv  Average evaluation depth: 
 v   Average recursion depth: 
 ....
-..XO
+.OX.
 .X..
 ....
 
 
-Move coordinates: A0
-i   Evaluation time: 0.025619029998779297
+Move coordinates: D0
+i   Evaluation time: 0.03052210807800293
 ii  Heuristic evaluations: 3
 iii Evaluations by depth: 
 iv  Average evaluation depth: 
 v   Average recursion depth: 
-O...
-..XO
+...O
+.OX.
 .X..
 ....
 
 
 Move coordinates: C2
-i   Evaluation time: 0.030426979064941406
+i   Evaluation time: 0.03844904899597168
 ii  Heuristic evaluations: 4
 iii Evaluations by depth: 
 iv  Average evaluation depth: 
 v   Average recursion depth: 
-O...
-..XO
+...O
+.OX.
 .XX.
 ....
 
 
-Move coordinates: C0
-i   Evaluation time: 0.03526806831359863
+Move coordinates: A0
+i   Evaluation time: 0.043366193771362305
 ii  Heuristic evaluations: 5
 iii Evaluations by depth: 
 iv  Average evaluation depth: 
 v   Average recursion depth: 
-O.O.
-..XO
+O..O
+.OX.
 .XX.
 ....
 
 
 Move coordinates: D2
-i   Evaluation time: 0.0426020622253418
+i   Evaluation time: 0.05204200744628906
 ii  Heuristic evaluations: 6
 iii Evaluations by depth: 
 iv  Average evaluation depth: 
 v   Average recursion depth: 
-O.O.
-..XO
+O..O
+.OX.
 .XXX
 ....
 
 
 Move coordinates: A2
-i   Evaluation time: 0.04745912551879883
+i   Evaluation time: 0.05695915222167969
 ii  Heuristic evaluations: 7
 iii Evaluations by depth: 
 iv  Average evaluation depth: 
 v   Average recursion depth: 
-O.O.
-..XO
+O..O
+.OX.
 OXXX
 ....
 
 
-Move coordinates: B0
-i   Evaluation time: 0.055117130279541016
+Move coordinates: C0
+i   Evaluation time: 0.06516098976135254
 ii  Heuristic evaluations: 8
 iii Evaluations by depth: 
 iv  Average evaluation depth: 
 v   Average recursion depth: 
-OXO.
-..XO
+O.XO
+.OX.
 OXXX
 ....
 
 
-Move coordinates: D0
-i   Evaluation time: 0.060064077377319336
+Move coordinates: C3
+i   Evaluation time: 0.07004404067993164
 ii  Heuristic evaluations: 9
 iii Evaluations by depth: 
 iv  Average evaluation depth: 
 v   Average recursion depth: 
-OXOO
-..XO
+O.XO
+.OX.
 OXXX
-....
+..O.
 
 
-Move coordinates: B1
-i   Evaluation time: 0.06909298896789551
+Move coordinates: A1
+i   Evaluation time: 0.07519817352294922
 ii  Heuristic evaluations: 10
 iii Evaluations by depth: 
 iv  Average evaluation depth: 
 v   Average recursion depth: 
-OXOO
-.XXO
+O.XO
+XOX.
 OXXX
-....
+..O.
 
 
-Move coordinates: A3
-i   Evaluation time: 0.0746159553527832
+Move coordinates: B0
+i   Evaluation time: 0.08320116996765137
 ii  Heuristic evaluations: 11
 iii Evaluations by depth: 
 iv  Average evaluation depth: 
 v   Average recursion depth: 
-OXOO
-.XXO
+OOXO
+XOX.
 OXXX
-O...
+..O.
 
 
-Move coordinates: A1
-i   Evaluation time: 0.0801241397857666
+Move coordinates: D1
+i   Evaluation time: 0.08835220336914062
 ii  Heuristic evaluations: 12
 iii Evaluations by depth: 
 iv  Average evaluation depth: 
 v   Average recursion depth: 
-OXOO
-XXXO
+OOXO
+XOXX
 OXXX
-O...
+..O.
 
 
 Move coordinates: B3
-i   Evaluation time: 0.09711503982543945
+i   Evaluation time: 0.0962669849395752
 ii  Heuristic evaluations: 13
 iii Evaluations by depth: 
 iv  Average evaluation depth: 
 v   Average recursion depth: 
-OXOO
-XXXO
+OOXO
+XOXX
 OXXX
-OO..
+.OO.
 
 
-Move coordinates: C3
-i   Evaluation time: 0.10306310653686523
+Move coordinates: D3
+i   Evaluation time: 0.10117411613464355
 ii  Heuristic evaluations: 14
 iii Evaluations by depth: 
 iv  Average evaluation depth: 
 v   Average recursion depth: 
-OXOO
-XXXO
+OOXO
+XOXX
 OXXX
-OOX.
+.OOX
 
 
-Move coordinates: D3
-i   Evaluation time: 0.12098813056945801
+Move coordinates: A3
+i   Evaluation time: 0.10956907272338867
 ii  Heuristic evaluations: 15
 iii Evaluations by depth: 
 iv  Average evaluation depth: 
 v   Average recursion depth: 
-OXOO
-XXXO
-OXXX
 OOXO
+XOXX
+OXXX
+OOOX
 
 
 Winner: Tie
-Average evaluation time: 0.29757104621214026
+Average evaluation time: 0.47219095931333654
 Total heuristic evaluations: 1345
 Evaluations by depth: Depth: 0, state count: 2 Depth: 1, state count: 1358 
 Average of per-move average depth: 0.9985294117647059

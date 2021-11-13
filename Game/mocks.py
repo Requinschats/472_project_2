@@ -1,7 +1,7 @@
 def input_mock_game_settings():
-    board_size = 4
+    board_size = 5
     blocks = []
-    winning_line_size = 4
+    winning_line_size = 5
     maximum_depths = 2, 2
     maximum_computing_time = 100
     return board_size, blocks, winning_line_size, maximum_depths, maximum_computing_time

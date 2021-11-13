@@ -39,6 +39,4 @@ def select_player_from_token(token):
 
 def select_formatted_coordinates(coordinates):
     x, y = coordinates
-    print(x)
-    print(y)
     return chr(97 + x).upper() + str(y)
