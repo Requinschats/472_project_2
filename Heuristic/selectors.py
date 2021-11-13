@@ -62,14 +62,10 @@ def select_min_max_center_score_differential(game, board_parameters):
     return max_center_score_differential
 
 
-def select_is_move_on_board(board, move):
+def select_is_move_on_board(board_size, move):
     x, y = move
-    try:
-        board[int(x)][int(y)]
-    except (ValueError, IndexError):
-        return False
-    else:
-        return True
+    if -1 < y < board_size and -1 < x < board_size: return True
+    return False
 
 
 def select_surrounding_moves(x, y):
@@ -77,12 +73,12 @@ def select_surrounding_moves(x, y):
             (x - 1, y + 1), (x, y + 1), (x + 1, y + 1)]
 
 
-def select_surrounding_moves_from_position_score(board, position_coordinates):
+def select_surrounding_moves_from_position_score(board, position_coordinates, board_size):
     connection_count = 0
     (x, y) = position_coordinates
     for move in select_surrounding_moves(x, y):
         x_surrounding, y_surrounding = move
-        if not select_is_move_on_board(board, move): continue
+        if not select_is_move_on_board(board_size, move): continue
         if board[y_surrounding][x_surrounding] == board[y][x]:
             connection_count += 1
     return connection_count
@@ -98,10 +94,10 @@ def select_connect_groups_score_differential(game, board_parameters):
             position_token = game.current_state[y][x]
             if position_token == min_token:
                 min_connected_group_score += select_surrounding_moves_from_position_score(
-                    game.current_state, (x, y))
+                    game.current_state, (x, y), board_size)
             if position_token == max_token:
                 max_connected_group_score += select_surrounding_moves_from_position_score(
-                    game.current_state, (x, y))
+                    game.current_state, (x, y), board_size)
     return max_connected_group_score - min_connected_group_score
 
 
@@ -111,3 +107,45 @@ def select_player_heuristic_id_from_player_turn(game):
         return game.heuristics[0]
     else:
         return game.heuristics[1]
+
+
+def select_surrounding_position_cardinality_contribution(game_board, move, player_token,
+                                                         other_player_token, board_size):
+    x_surrounding, y_surrounding = move
+    if not select_is_move_on_board(board_size, move): return -2
+    surrounding_position_token = game_board[y_surrounding][x_surrounding]
+    if surrounding_position_token == other_player_token: return 0
+    if surrounding_position_token == c.EMPTY_TOKEN: return 1
+    if surrounding_position_token == player_token: return 2
+
+
+def select_position_cardinality_score(game_board, coordinate, token, board_size):
+    (x, y) = coordinate
+    cardinality_score = 0
+    other_player_token = s.select_opposite_player(token)
+    for move in select_surrounding_moves(x, y):
+        cardinality_score += select_surrounding_position_cardinality_contribution(game_board, move,
+                                                                                  token,
+                                                                                  other_player_token,
+                                                                                  board_size)
+    return cardinality_score
+
+
+def select_max_move_cardinalities_differential(game, board_parameters):
+    board_size, _, _, _, _ = board_parameters
+    max_token, min_token = s.select_max_min_tokens_from_player_turn(game.player_turn)
+    game_board = game.current_state
+    max_cardinality_score, min_cardinality_score = 0, 0
+    for y in range(board_size):
+        for x in range(board_size):
+            position_token = game_board[y][x]
+            if position_token == c.EMPTY_TOKEN: continue
+            if position_token == max_token:
+                position_score = select_position_cardinality_score(game_board, (x, y), max_token,
+                                                                   board_size)
+                max_cardinality_score += position_score
+            if position_token == min_token:
+                position_score = select_position_cardinality_score(game_board, (x, y), min_token,
+                                                                   board_size)
+                min_cardinality_score += position_score
+    return max_cardinality_score - min_cardinality_score
