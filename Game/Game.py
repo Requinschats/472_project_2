@@ -21,7 +21,7 @@ class Game:
     def initialize_game(self, board_parameters):
         self.current_state = s.select_initial_state(board_parameters)
         self.player_turn = s.select_initial_player()
-        self.statistics = s.select_initial_statistics()
+        # self.statistics = s.select_initial_statistics()
 
     def is_valid_move(self, px, py, board_parameters):
         return s.select_is_valid_move(self, px, py, board_parameters)
@@ -35,7 +35,7 @@ class Game:
 
     def input_move(self, board_parameters):
         while True:
-            px, py = o.input_coordonates(self)
+            px, py = o.input_coordinates(self)
             if self.is_valid_move(px, py, board_parameters):
                 return px, py
             else:
@@ -47,8 +47,14 @@ class Game:
     def add_evaluation_time(self, start_time):
         self.statistics["evaluation_times"].append(time.time() - start_time)
 
+    def turn_index(self):
+        return self.statistics["move_count"]
+
     def increment_states_count(self):
-        self.statistics["states_evaluated"] += 1
+        if self.turn_index() in self.statistics["states_evaluated"]:
+            self.statistics["states_evaluated"][self.turn_index()] += 1
+        else:
+            self.statistics["states_evaluated"][self.turn_index()] = 0
 
     def increment_depth_state_count(self, depth):
         if depth in self.statistics["state_count_per_depth"]:
@@ -143,9 +149,10 @@ class Game:
         return best_value, top_x_coordinate, top_y_coordinate
 
     def finish_turn(self, x, y, file, board_parameters):
-        go.output_move_to_game_trace(file, (x, y), "1s", self, board_parameters)
-        self.increment_move_count()
         self.current_state[y][x] = self.player_turn
+        go.output_turn_statistics(file, self.statistics, (x, y))
+        go.output_move_to_game_trace(file, self, board_parameters)
+        self.increment_move_count()
         self.switch_player()
 
     def handle_end_game(self, file, board_parameters):
@@ -167,13 +174,15 @@ class Game:
         while True:
             if not mock_inputs: o.draw_game_board(self, board_parameters)
 
-            if self.handle_end_game(file, board_parameters): return
+            game_result = self.handle_end_game(file, board_parameters)
+            if game_result: return self.statistics, game_result
 
             if s.select_is_human_turn(self, player_x, player_o):
                 (x, y) = s.select_human_turn_move(self, mock_inputs, board_parameters, (x, y))
 
             if s.select_is_ai_turn(self, player_x, player_o):
+                start_time = time.time()
                 (m, x, y) = s.select_heuristic_move(board_parameters, algo, self)
-                o.output_ai_turn_recommend(time.time(), self, x, y)
+                o.output_ai_turn_recommend(start_time, self, x, y)
 
             self.finish_turn(x=x, y=y, file=file, board_parameters=board_parameters)

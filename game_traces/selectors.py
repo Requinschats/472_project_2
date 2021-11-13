@@ -35,3 +35,8 @@ def select_player_from_token(token):
         return "X"
     if token == gc.O_TOKEN:
         return "O"
+
+
+def select_formatted_coordinates(coordinates):
+    x, y = coordinates
+    return chr(97 + x).upper() + str(y)
