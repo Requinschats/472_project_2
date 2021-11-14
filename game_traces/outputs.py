@@ -54,7 +54,7 @@ def output_game_trace_statistics(file, statistics):
         "\nTotal heuristic evaluations: " + str(sum(statistics["states_evaluated"].values())))
 
     output_state_count_per_depth(file, statistics["state_count_per_depth"])
-    
+
     file.write("\nAverage of per-move average depth: " + str(statistics["average_move_depths"]))
 
     file.write("\nTotal moves: " + str(statistics["move_count"]))
@@ -74,7 +74,9 @@ def output_turn_statistics(file, statistics, move_coordinates):
     turn_index = statistics["move_count"]
     file.write(
         "i   " + "Evaluation time: " + str(statistics["evaluation_times"][turn_index]) + "\n")
-    file.write("ii  " + "Heuristic evaluations: " + str(turn_index) + "\n")
-    file.write("iii " + "Evaluations by depth: " + "\n")
-    file.write("iv  " + "Average evaluation depth: " + "\n")
-    file.write("v   " + "Average recursion depth: " + "\n")
+    file.write("ii  " + "Heuristic evaluations: " + str(
+        sum(statistics["states_evaluated"].values())) + "\n")
+    file.write("iii " + "Evaluations by depth: " + str(statistics["states_evaluated"]) + "\n")
+    file.write(
+        "iv  " + "Average evaluation depth: " + str(
+            gs.select_list_average(statistics["average_move_depths"])) + "\n")

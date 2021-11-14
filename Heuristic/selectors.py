@@ -112,11 +112,12 @@ def select_player_heuristic_id_from_player_turn(game):
 def select_surrounding_position_cardinality_contribution(game_board, move, player_token,
                                                          other_player_token, board_size):
     x_surrounding, y_surrounding = move
-    if not select_is_move_on_board(board_size, move): return -2
+    if not select_is_move_on_board(board_size, move): return -3
     surrounding_position_token = game_board[y_surrounding][x_surrounding]
+    if surrounding_position_token == c.BLOCK_TOKEN: return -1
     if surrounding_position_token == other_player_token: return 0
     if surrounding_position_token == c.EMPTY_TOKEN: return 1
-    if surrounding_position_token == player_token: return 2
+    if surrounding_position_token == player_token: return 3
 
 
 def select_position_cardinality_score(game_board, coordinate, token, board_size):
@@ -139,7 +140,7 @@ def select_max_move_cardinalities_differential(game, board_parameters):
     for y in range(board_size):
         for x in range(board_size):
             position_token = game_board[y][x]
-            if position_token == c.EMPTY_TOKEN: continue
+            if position_token == c.EMPTY_TOKEN or position_token == c.BLOCK_TOKEN: continue
             if position_token == max_token:
                 position_score = select_position_cardinality_score(game_board, (x, y), max_token,
                                                                    board_size)
