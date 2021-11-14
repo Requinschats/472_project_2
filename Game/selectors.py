@@ -226,7 +226,7 @@ def select_is_immediate_parent_to_max_depth_leaf(depth_parameters, game_board,
 
 def select_initial_statistics():
     return {
-        "evaluation_times": [],
+        "evaluation_times": [0],
         "states_evaluated": {},
         "average_move_depths": [],
         "state_count_per_depth": {},
